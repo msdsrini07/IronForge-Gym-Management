@@ -1,0 +1,900 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronForge | Member Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0b0b;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .dashboard-nav {
+            min-height: 75px;
+            padding: 15px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #111;
+            border-bottom: 1px solid #292929;
+        }
+
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
+        .logo span, .welcome-section h1 span { color: #00f5b8; }
+
+        button { font-family: inherit; }
+
+        .logout-btn {
+            border: 1px solid #ff4500;
+            background: transparent;
+            color: #ff4500;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: .3s;
+        }
+
+        .logout-btn:hover { background: #ff4500; color: #fff; }
+
+        .dashboard-container {
+            width: 88%;
+            max-width: 1200px;
+            margin: 45px auto;
+        }
+
+        .welcome-section { margin-bottom: 35px; }
+        .welcome-section .tag {
+            color: #00f5b8;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .welcome-section h1 { font-size: 40px; margin-top: 10px; }
+        .welcome-section p { color: #999; margin-top: 10px; line-height: 1.6; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .dashboard-card {
+            background: #141414;
+            border: 1px solid #292929;
+            border-radius: 12px;
+            padding: 26px;
+            min-width: 0;
+            transition: .3s;
+        }
+
+        .dashboard-card:hover {
+            border-color: #00f5b8;
+            box-shadow: 0 10px 35px rgba(0,245,184,.07);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(0,245,184,.1);
+            color: #00f5b8;
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .dashboard-card h2 { font-size: 22px; margin-bottom: 10px; }
+        .dashboard-card p { color: #999; line-height: 1.6; }
+
+        .profile-info { margin-top: 15px; }
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #242424;
+        }
+
+        .profile-row:last-child { border-bottom: none; }
+        .profile-label { color: #777; }
+        .profile-value { color: #fff; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+
+        .booking-card, .bookings-card { grid-column: span 2; }
+        .booking-card form { margin-top: 22px; }
+
+        .booking-field { margin-bottom: 16px; }
+        .booking-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #bbb;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .booking-field input,
+        .booking-field select,
+        .booking-field textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0d0d0d;
+            border: 1px solid #303030;
+            border-radius: 6px;
+            color: #fff;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .booking-field input:focus,
+        .booking-field select:focus,
+        .booking-field textarea:focus {
+            border-color: #00f5b8;
+            box-shadow: 0 0 0 2px rgba(0,245,184,.08);
+        }
+
+        .booking-field select { cursor: pointer; }
+        .booking-field textarea { resize: vertical; }
+
+        .booking-submit {
+            border: none;
+            background: #00f5b8;
+            color: #000;
+            padding: 12px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 5px;
+            transition: .3s;
+        }
+
+        .booking-submit:hover { background: #00d9a3; transform: translateY(-2px); }
+        .booking-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        .booking-message { margin-top: 12px; font-size: 14px; min-height: 20px; }
+        .bookings-card > p { margin-bottom: 20px; }
+
+        .bookings-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .booking-item {
+            background: #0d0d0d;
+            border: 1px solid #292929;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .booking-item:hover { border-color: #00f5b8; }
+
+        .booking-item-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .booking-program { font-size: 18px; font-weight: 800; }
+
+        .booking-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            white-space: nowrap;
+        }
+
+        .status-pending { background: rgba(255,193,7,.12); color: #ffc107; }
+        .status-confirmed { background: rgba(0,245,184,.12); color: #00f5b8; }
+        .status-cancelled { background: rgba(255,69,0,.12); color: #ff4500; }
+        .status-completed { background: rgba(100,149,237,.12); color: #6495ed; }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .booking-detail { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+        .booking-detail-label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .booking-detail-value {
+            color: #ddd;
+            font-size: 14px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .booking-notes {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+            color: #999;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .booking-actions {
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .cancel-booking-btn {
+            border: 1px solid #ff4500;
+            background: transparent;
+            color: #ff4500;
+            padding: 9px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .cancel-booking-btn:hover { background: #ff4500; color: #fff; }
+        .cancel-booking-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+        .bookings-loading, .bookings-empty, .bookings-error {
+            padding: 25px;
+            text-align: center;
+            border: 1px dashed #303030;
+            border-radius: 8px;
+            color: #777;
+            overflow-wrap: anywhere;
+        }
+
+        .bookings-loading i, .bookings-empty i { color: #00f5b8; margin-right: 8px; }
+        .bookings-error { color: #ff4500; }
+
+        .dashboard-footer {
+            text-align: center;
+            margin-top: 55px;
+            padding: 25px;
+            color: #666;
+            border-top: 1px solid #222;
+        }
+
+        @media (max-width: 700px) {
+            .dashboard-nav { padding: 15px 5%; }
+            .logo { font-size: 22px; }
+            .logout-btn { padding: 8px 12px; font-size: 12px; }
+            .dashboard-container { width: 90%; margin: 30px auto; }
+            .welcome-section h1 { font-size: 31px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .dashboard-card { padding: 21px; }
+            .booking-card, .bookings-card { grid-column: span 1; }
+            .profile-row { flex-direction: column; gap: 5px; }
+            .profile-value { text-align: left; }
+            .booking-item-top { align-items: flex-start; flex-direction: column; }
+            .booking-details { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+            .booking-submit, .cancel-booking-btn { width: 100%; }
+            .booking-actions { justify-content: stretch; }
+        }
+
+        @media (max-width: 420px) {
+            .booking-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="dashboard-nav">
+        <div class="logo">IRON<span>FORGE</span></div>
+        <button class="logout-btn" id="logoutBtn" type="button">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+    </nav>
+
+    <main class="dashboard-container">
+        <section class="welcome-section">
+            <div class="tag">IRONFORGE MEMBERS</div>
+            <h1>Welcome, <span id="memberName">Member</span> 👋</h1>
+            <p>Manage your IronForge membership, bookings and profile.</p>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-icon"><i class="fa-solid fa-user"></i></div>
+                <h2>My Profile</h2>
+                <div class="profile-info">
+                    <div class="profile-row">
+                        <span class="profile-label">Name</span>
+                        <span class="profile-value" id="profileName">-</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="profile-label">Email</span>
+                        <span class="profile-value" id="profileEmail">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon"><i class="fa-solid fa-id-card"></i></div>
+                <h2>My Membership</h2>
+                <div id="membershipInfo"><p>Loading membership...</p></div>
+            </div>
+
+            <div class="dashboard-card booking-card">
+                <div class="card-icon"><i class="fa-solid fa-calendar-plus"></i></div>
+                <h2>Book a Class</h2>
+                <p>Choose a trainer and reserve your workout session at IronForge.</p>
+
+                <form id="bookingForm">
+                    <div class="booking-field">
+                        <label for="bookingTrainer">Select Trainer *</label>
+                        <select id="bookingTrainer" required>
+                            <option value="">Loading trainers...</option>
+                        </select>
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="bookingProgram">Workout Program *</label>
+                        <select id="bookingProgram" required>
+                            <option value="">Select a workout</option>
+                            <option value="Chest Workout">Chest Workout</option>
+                            <option value="Back Workout">Back Workout</option>
+                            <option value="Shoulder Workout">Shoulder Workout</option>
+                            <option value="Biceps Workout">Biceps Workout</option>
+                            <option value="Triceps Workout">Triceps Workout</option>
+                            <option value="Leg Workout">Leg Workout</option>
+                            <option value="Abs Workout">Abs Workout</option>
+                        </select>
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="bookingDate">Date *</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="startTime">Start Time *</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="endTime">End Time *</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="bookingNotes">Notes</label>
+                        <textarea id="bookingNotes" rows="3" placeholder="Any special request? (Optional)"></textarea>
+                    </div>
+
+                    <button type="submit" class="booking-submit" id="bookingSubmitBtn">
+                        <i class="fa-solid fa-calendar-check"></i> Book Class
+                    </button>
+
+                    <p id="bookingMessage" class="booking-message" aria-live="polite"></p>
+                </form>
+            </div>
+
+            <div class="dashboard-card bookings-card">
+                <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <h2>My Bookings</h2>
+                <p>View your upcoming and previous workout bookings.</p>
+
+                <div id="bookingsList" class="bookings-list">
+                    <div class="bookings-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Loading bookings...
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="dashboard-footer">
+        <p>© 2026 IronForge Gym. Train Hard. Stay Strong.</p>
+    </footer>
+
+    <script>
+        "use strict";
+
+        const API_BASE_URL = "http://127.0.0.1:5000/api";
+
+        const storedUser = localStorage.getItem("ironforgeUser");
+        const token = localStorage.getItem("ironforgeToken");
+
+        if (!storedUser || !token) {
+            window.location.href = "disicipline.html";
+        }
+
+        let user = {};
+
+        try {
+            user = JSON.parse(storedUser || "{}");
+
+            if (!user || typeof user !== "object") {
+                throw new Error("Invalid user data.");
+            }
+        } catch (error) {
+            console.error("Invalid stored user:", error);
+            localStorage.removeItem("ironforgeUser");
+            localStorage.removeItem("ironforgeToken");
+            window.location.href = "disicipline.html";
+        }
+
+        const membershipInfo = document.getElementById("membershipInfo");
+        const bookingForm = document.getElementById("bookingForm");
+        const bookingMessage = document.getElementById("bookingMessage");
+        const bookingsList = document.getElementById("bookingsList");
+        const bookingSubmitBtn = document.getElementById("bookingSubmitBtn");
+        const bookingTrainer = document.getElementById("bookingTrainer");
+        const bookingDateInput = document.getElementById("bookingDate");
+
+        document.getElementById("memberName").textContent = user.name || "Member";
+        document.getElementById("profileName").textContent = user.name || "-";
+        document.getElementById("profileEmail").textContent = user.email || "-";
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]);
+        }
+
+        async function readApiResponse(response) {
+            const responseText = await response.text();
+
+            if (!responseText) return {};
+
+            try {
+                return JSON.parse(responseText);
+            } catch (error) {
+                console.error("Invalid API response:", responseText);
+                throw new Error(
+                    `Server returned an invalid response (${response.status}). Check whether the backend is running.`
+                );
+            }
+        }
+
+        function formatDate(dateValue) {
+            if (!dateValue) return "-";
+
+            const date = new Date(dateValue);
+
+            if (Number.isNaN(date.getTime())) return "-";
+
+            return new Intl.DateTimeFormat("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                timeZone: "UTC"
+            }).format(date);
+        }
+
+        // Set the minimum selectable booking date to today.
+        function setMinimumBookingDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const day = String(now.getDate()).padStart(2, "0");
+
+            bookingDateInput.min = `${year}-${month}-${day}`;
+        }
+
+        setMinimumBookingDate();
+
+        // Load the logged-in member's current membership.
+        async function loadMembership() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/membership`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                const data = await readApiResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load membership.");
+                }
+
+                const membership = data.membership;
+
+                if (!membership) {
+                    membershipInfo.innerHTML =
+                        '<p>No active membership found.</p>';
+                    return;
+                }
+
+                membershipInfo.innerHTML = `
+                    <div class="profile-info">
+                        <div class="profile-row">
+                            <span class="profile-label">Plan</span>
+                            <span class="profile-value">${escapeHtml(membership.plan || "-")}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Status</span>
+                            <span class="profile-value">${escapeHtml(membership.status || "-")}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Start Date</span>
+                            <span class="profile-value">${escapeHtml(formatDate(membership.startDate))}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Expiry Date</span>
+                            <span class="profile-value">${escapeHtml(formatDate(membership.expiryDate))}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Remaining</span>
+                            <span class="profile-value">${Number(membership.remainingDays ?? 0)} days</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error("Membership loading error:", error);
+                membershipInfo.innerHTML =
+                    `<p style="color:#ff4500">${escapeHtml(error.message)}</p>`;
+            }
+        }
+
+        // Load active trainers into the dropdown.
+        async function loadTrainers() {
+            bookingTrainer.disabled = true;
+            bookingTrainer.innerHTML = '<option value="">Loading trainers...</option>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/trainers`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                const data = await readApiResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load trainers.");
+                }
+
+                const trainers = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.trainers)
+                        ? data.trainers
+                        : [];
+
+                const activeTrainers = trainers.filter(trainer => {
+                    if (!trainer || !trainer._id || !trainer.name) return false;
+
+                    // If the API returns a status, only include active trainers.
+                    return !trainer.status ||
+                        String(trainer.status).toLowerCase() === "active";
+                });
+
+                if (activeTrainers.length === 0) {
+                    bookingTrainer.innerHTML =
+                        '<option value="">No active trainers available</option>';
+                    return;
+                }
+
+                bookingTrainer.innerHTML =
+                    '<option value="">Choose a trainer</option>' +
+                    activeTrainers.map(trainer => {
+                        const name = escapeHtml(trainer.name);
+                        const specialization = escapeHtml(
+                            trainer.specialization || "Fitness"
+                        );
+                        const id = escapeHtml(trainer._id);
+
+                        return `<option value="${id}">${name} — ${specialization}</option>`;
+                    }).join("");
+
+                bookingTrainer.disabled = false;
+            } catch (error) {
+                console.error("Trainer loading error:", error);
+                bookingTrainer.innerHTML =
+                    '<option value="">Unable to load trainers</option>';
+
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent =
+                    `${error.message} Check the GET /api/trainers endpoint.`;
+            }
+        }
+
+        // Create a booking and send the selected trainer ID to the backend.
+        bookingForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const trainer = bookingTrainer.value;
+            const program = document.getElementById("bookingProgram").value;
+            const bookingDate = bookingDateInput.value;
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+            const notes = document.getElementById("bookingNotes").value.trim();
+
+            if (!trainer || !program || !bookingDate || !startTime || !endTime) {
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent = "Please fill all required booking fields.";
+                return;
+            }
+
+            if (bookingDate < bookingDateInput.min) {
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent = "Please select today or a future date.";
+                return;
+            }
+
+            if (startTime >= endTime) {
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent = "End time must be later than start time.";
+                return;
+            }
+
+            bookingSubmitBtn.disabled = true;
+            bookingSubmitBtn.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Creating Booking...';
+
+            bookingMessage.style.color = "#00f5b8";
+            bookingMessage.textContent = "Creating your booking...";
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        trainer: trainer,
+                        program: program,
+                        bookingDate: bookingDate,
+                        startTime: startTime,
+                        endTime: endTime,
+                        notes: notes
+                    })
+                });
+
+                const data = await readApiResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to create booking.");
+                }
+
+                bookingMessage.style.color = "#00f5b8";
+                bookingMessage.textContent =
+                    data.message || "Class booked successfully!";
+
+                bookingForm.reset();
+                setMinimumBookingDate();
+
+                await loadBookings();
+            } catch (error) {
+                console.error("Booking error:", error);
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent = error.message;
+            } finally {
+                bookingSubmitBtn.disabled = false;
+                bookingSubmitBtn.innerHTML =
+                    '<i class="fa-solid fa-calendar-check"></i> Book Class';
+            }
+        });
+
+        // Load bookings for the logged-in member.
+        async function loadBookings() {
+            bookingsList.innerHTML = `
+                <div class="bookings-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Loading bookings...
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                const data = await readApiResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load bookings.");
+                }
+
+                const bookings = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.bookings)
+                        ? data.bookings
+                        : [];
+
+                if (bookings.length === 0) {
+                    bookingsList.innerHTML = `
+                        <div class="bookings-empty">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <br><br>No bookings found.
+                        </div>
+                    `;
+                    return;
+                }
+
+                bookingsList.innerHTML = bookings.map(booking => {
+                    const status = String(booking.status || "pending").toLowerCase();
+
+                    const allowedStatuses = [
+                        "pending", "confirmed", "cancelled", "completed"
+                    ];
+
+                    const safeStatus = allowedStatuses.includes(status)
+                        ? status
+                        : "pending";
+
+                    const trainerName =
+                        booking.trainer && typeof booking.trainer === "object"
+                            ? booking.trainer.name || "Trainer assigned"
+                            : booking.trainer
+                                ? "Trainer assigned"
+                                : "Not assigned";
+
+                    const trainerSpecialization =
+                        booking.trainer && typeof booking.trainer === "object"
+                            ? booking.trainer.specialization || ""
+                            : "";
+
+                    const canCancel =
+                        safeStatus !== "cancelled" &&
+                        safeStatus !== "completed";
+
+                    const cancelButton = canCancel ? `
+                        <div class="booking-actions">
+                            <button type="button"
+                                class="cancel-booking-btn"
+                                onclick="cancelBooking('${escapeHtml(booking._id)}', this)">
+                                <i class="fa-solid fa-xmark"></i> Cancel Booking
+                            </button>
+                        </div>
+                    ` : "";
+
+                    return `
+                        <div class="booking-item">
+                            <div class="booking-item-top">
+                                <div class="booking-program">
+                                    <i class="fa-solid fa-dumbbell"
+                                        style="color:#00f5b8;margin-right:8px"></i>
+                                    ${escapeHtml(booking.program || "Workout")}
+                                </div>
+
+                                <span class="booking-status status-${safeStatus}">
+                                    ${escapeHtml(safeStatus.toUpperCase())}
+                                </span>
+                            </div>
+
+                            <div class="booking-details">
+                                <div class="booking-detail">
+                                    <span class="booking-detail-label">Date</span>
+                                    <span class="booking-detail-value">
+                                        <i class="fa-regular fa-calendar"
+                                            style="color:#00f5b8;margin-right:5px"></i>
+                                        ${escapeHtml(formatDate(booking.bookingDate))}
+                                    </span>
+                                </div>
+
+                                <div class="booking-detail">
+                                    <span class="booking-detail-label">Trainer</span>
+                                    <span class="booking-detail-value">
+                                        <i class="fa-solid fa-user-tie"
+                                            style="color:#00f5b8;margin-right:5px"></i>
+                                        ${escapeHtml(trainerName)}
+                                        ${trainerSpecialization
+                                            ? `<br><small style="color:#777">${escapeHtml(trainerSpecialization)}</small>`
+                                            : ""}
+                                    </span>
+                                </div>
+
+                                <div class="booking-detail">
+                                    <span class="booking-detail-label">Start Time</span>
+                                    <span class="booking-detail-value">
+                                        <i class="fa-regular fa-clock"
+                                            style="color:#00f5b8;margin-right:5px"></i>
+                                        ${escapeHtml(booking.startTime || "-")}
+                                    </span>
+                                </div>
+
+                                <div class="booking-detail">
+                                    <span class="booking-detail-label">End Time</span>
+                                    <span class="booking-detail-value">
+                                        <i class="fa-regular fa-clock"
+                                            style="color:#00f5b8;margin-right:5px"></i>
+                                        ${escapeHtml(booking.endTime || "-")}
+                                    </span>
+                                </div>
+                            </div>
+
+                            ${booking.notes ? `
+                                <div class="booking-notes">
+                                    <strong style="color:#bbb">Notes:</strong>
+                                    ${escapeHtml(booking.notes)}
+                                </div>
+                            ` : ""}
+
+                            ${cancelButton}
+                        </div>
+                    `;
+                }).join("");
+            } catch (error) {
+                console.error("Bookings loading error:", error);
+                bookingsList.innerHTML = `
+                    <div class="bookings-error">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+            }
+        }
+
+        // Cancel a booking.
+        async function cancelBooking(bookingId, clickedButton) {
+            if (!confirm("Are you sure you want to cancel this booking?")) {
+                return;
+            }
+
+            try {
+                if (clickedButton) {
+                    clickedButton.disabled = true;
+                    clickedButton.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin"></i> Cancelling...';
+                }
+
+                const response = await fetch(
+                    `${API_BASE_URL}/bookings/${encodeURIComponent(bookingId)}/cancel`,
+                    {
+                        method: "PUT",
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }
+                );
+
+                const data = await readApiResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to cancel booking.");
+                }
+
+                bookingMessage.style.color = "#00f5b8";
+                bookingMessage.textContent =
+                    data.message || "Booking cancelled successfully!";
+
+                await loadBookings();
+            } catch (error) {
+                console.error("Cancel booking error:", error);
+                bookingMessage.style.color = "#ff4500";
+                bookingMessage.textContent = error.message;
+
+                if (clickedButton) {
+                    clickedButton.disabled = false;
+                    clickedButton.innerHTML =
+                        '<i class="fa-solid fa-xmark"></i> Cancel Booking';
+                }
+            }
+        }
+
+        // Logout.
+        document.getElementById("logoutBtn").addEventListener("click", function() {
+            localStorage.removeItem("ironforgeToken");
+            localStorage.removeItem("ironforgeUser");
+            window.location.href = "disicipline.html";
+        });
+
+        // Initial dashboard load.
+        loadMembership();
+        loadBookings();
+        loadTrainers();
+    </script>
+</body>
+</html>

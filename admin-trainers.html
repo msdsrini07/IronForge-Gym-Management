@@ -1,0 +1,3152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Trainer Management | IronForge Admin</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0b0b0b;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            height: 75px;
+            background: #111111;
+            border-bottom: 1px solid #242424;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 35px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #ff5a00;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .admin-badge {
+            background: rgba(255, 90, 0, 0.12);
+            color: #ff6a00;
+
+            border: 1px solid rgba(255, 90, 0, 0.3);
+
+            padding: 8px 15px;
+            border-radius: 20px;
+
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: #ffffff;
+
+            border: 1px solid #444;
+
+            padding: 9px 15px;
+
+            border-radius: 6px;
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            border-color: #ff5a00;
+            color: #ff5a00;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .create-btn {
+            background: #ff5a00;
+            color: white;
+
+            border: none;
+
+            padding: 12px 20px;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .create-btn:hover {
+            background: #ff7200;
+            transform: translateY(-1px);
+        }
+
+        /* ================= STATS ================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #141414;
+
+            border: 1px solid #252525;
+
+            padding: 22px;
+
+            border-radius: 10px;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* ================= CONTROLS ================= */
+
+        .controls {
+            background: #141414;
+
+            border: 1px solid #252525;
+
+            padding: 18px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input,
+        .controls select {
+
+            width: 100%;
+
+            background: #0d0d0d;
+
+            color: white;
+
+            border: 1px solid #333;
+
+            border-radius: 6px;
+
+            padding: 11px 13px;
+
+            outline: none;
+        }
+
+        .search-box input:focus,
+        .controls select:focus {
+            border-color: #ff5a00;
+        }
+
+        .refresh-btn {
+
+            background: #222;
+
+            color: white;
+
+            border: 1px solid #444;
+
+            border-radius: 6px;
+
+            padding: 10px 17px;
+
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+
+            border-color: #ff5a00;
+
+            color: #ff5a00;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+
+            background: #141414;
+
+            border: 1px solid #252525;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 1100px;
+        }
+
+        th {
+
+            background: #191919;
+
+            color: #999;
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            padding: 16px;
+
+            text-align: left;
+        }
+
+        td {
+
+            padding: 16px;
+
+            border-top: 1px solid #242424;
+
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #181818;
+        }
+
+        .trainer-name {
+            font-weight: bold;
+        }
+
+        .trainer-email {
+
+            color: #888;
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status {
+
+            display: inline-block;
+
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+        .status-active {
+
+            background: rgba(0, 200, 100, 0.12);
+
+            color: #00d26a;
+        }
+
+        .status-inactive {
+
+            background: rgba(255, 70, 70, 0.12);
+
+            color: #ff6464;
+        }
+
+        /* ================= ACTION BUTTONS ================= */
+
+        .action-btn {
+
+            background: #222;
+
+            color: #ddd;
+
+            border: 1px solid #444;
+
+            padding: 7px 11px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            margin-right: 5px;
+
+            margin-bottom: 5px;
+
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+
+            border-color: #ff5a00;
+
+            color: #ff5a00;
+        }
+
+        .delete-btn:hover {
+
+            border-color: #ff4444;
+
+            color: #ff4444;
+        }
+
+        .activate-btn:hover {
+
+            border-color: #00d26a;
+
+            color: #00d26a;
+        }
+
+        .deactivate-btn:hover {
+
+            border-color: #ff6464;
+
+            color: #ff6464;
+        }
+
+        .empty-state {
+
+            text-align: center;
+
+            color: #777;
+
+            padding: 45px;
+        }
+
+        /* ================= MODAL ================= */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, 0.78);
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 1000;
+
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+
+            width: 100%;
+
+            max-width: 650px;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            background: #151515;
+
+            border: 1px solid #333;
+
+            border-radius: 12px;
+
+            padding: 28px;
+        }
+
+        .modal-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+        }
+
+        .close-btn {
+
+            background: none;
+
+            border: none;
+
+            color: #aaa;
+
+            font-size: 25px;
+
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #ff5a00;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 17px;
+        }
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+
+            color: #bbb;
+
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+
+            background: #0d0d0d;
+
+            color: white;
+
+            border: 1px solid #333;
+
+            border-radius: 6px;
+
+            padding: 11px 12px;
+
+            outline: none;
+        }
+
+        .form-group textarea {
+
+            resize: vertical;
+
+            min-height: 90px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+
+            border-color: #ff5a00;
+        }
+
+        .modal-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+        .cancel-btn {
+
+            background: #222;
+
+            color: white;
+
+            border: 1px solid #444;
+
+            padding: 11px 18px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            border-color: #ff5a00;
+        }
+
+        .save-btn {
+
+            background: #ff5a00;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 20px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .save-btn:hover {
+            background: #ff7200;
+        }
+
+        /* ================= DETAILS ================= */
+
+        .details-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 18px;
+        }
+
+        .detail-item {
+
+            background: #0e0e0e;
+
+            border: 1px solid #292929;
+
+            padding: 15px;
+
+            border-radius: 7px;
+        }
+
+        .detail-label {
+
+            color: #888;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+
+            color: white;
+
+            font-size: 14px;
+
+            word-break: break-word;
+        }
+
+        .detail-full {
+            grid-column: 1 / -1;
+        }
+
+        /* ================= TOAST ================= */
+
+        .toast {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            background: #1b1b1b;
+
+            border: 1px solid #444;
+
+            padding: 14px 20px;
+
+            border-radius: 7px;
+
+            display: none;
+
+            z-index: 2000;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.success {
+            border-color: #00b85a;
+        }
+
+        .toast.error {
+            border-color: #ff4d4d;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .page-header {
+
+                align-items: flex-start;
+
+                gap: 15px;
+
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 0 18px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid,
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full,
+            .detail-full {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
+<header>
+
+    <div class="logo">
+        IRONFORGE
+    </div>
+
+    <div class="header-right">
+
+        <div class="admin-badge">
+            ADMIN PANEL
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+
+<main class="container">
+
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h1>
+                Trainer Management
+            </h1>
+
+            <p>
+                Manage IronForge trainers and their availability.
+            </p>
+
+        </div>
+
+        <button
+            class="create-btn"
+            onclick="openCreateTrainerModal()"
+        >
+            + Add Trainer
+        </button>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- STATS -->
+    <!-- ========================================================= -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Trainers
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalTrainers"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Active Trainers
+            </div>
+
+            <div
+                class="stat-value"
+                id="activeTrainers"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Inactive Trainers
+            </div>
+
+            <div
+                class="stat-value"
+                id="inactiveTrainers"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Specializations
+            </div>
+
+            <div
+                class="stat-value"
+                id="specializationCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- CONTROLS -->
+    <!-- ========================================================= -->
+
+    <div class="controls">
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by trainer name, email or specialization..."
+                oninput="filterTrainers()"
+            >
+
+        </div>
+
+
+        <div style="width: 180px;">
+
+            <select
+                id="statusFilter"
+                onchange="filterTrainers()"
+            >
+
+                <option value="all">
+                    All Status
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            class="refresh-btn"
+            onclick="loadTrainers()"
+        >
+            ↻ Refresh
+        </button>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- TRAINER TABLE -->
+    <!-- ========================================================= -->
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Trainer</th>
+
+                    <th>Phone</th>
+
+                    <th>Specialization</th>
+
+                    <th>Experience</th>
+
+                    <th>Availability</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="trainerTableBody">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty-state"
+                    >
+                        Loading trainers...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- CREATE TRAINER MODAL -->
+<!-- ========================================================= -->
+
+<div
+    class="modal"
+    id="createTrainerModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Add New Trainer
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeCreateTrainerModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="createTrainerForm"
+            onsubmit="createTrainer(event)"
+        >
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Trainer Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="trainerName"
+                        placeholder="Enter trainer name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="trainerEmail"
+                        placeholder="trainer@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        id="trainerPhone"
+                        placeholder="Enter phone number"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Specialization
+                    </label>
+
+                    <input
+                        type="text"
+                        id="trainerSpecialization"
+                        placeholder="e.g. Strength Training"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Experience (Years)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="trainerExperience"
+                        min="0"
+                        placeholder="e.g. 5"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Availability
+                    </label>
+
+                    <input
+                        type="text"
+                        id="trainerAvailability"
+                        placeholder="e.g. Mon-Fri 6 AM - 12 PM"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Bio
+                    </label>
+
+                    <textarea
+                        id="trainerBio"
+                        placeholder="Enter trainer description..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeCreateTrainerModal()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    Create Trainer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- VIEW TRAINER DETAILS MODAL -->
+<!-- ========================================================= -->
+
+<div
+    class="modal"
+    id="trainerDetailsModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Trainer Details
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeDetailsModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="details-grid">
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Name
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailName"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Email
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailEmail"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Phone
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailPhone"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Specialization
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailSpecialization"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Experience
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailExperience"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Availability
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailAvailability"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Status
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailStatus"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <div class="detail-label">
+                    Created
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailCreated"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-item detail-full">
+
+                <div class="detail-label">
+                    Bio
+                </div>
+
+                <div
+                    class="detail-value"
+                    id="detailBio"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeDetailsModal()"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- EDIT TRAINER MODAL -->
+<!-- ========================================================= -->
+
+<div
+    class="modal"
+    id="editTrainerModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Edit Trainer
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeEditTrainerModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="editTrainerForm"
+            onsubmit="updateTrainer(event)"
+        >
+
+            <input
+                type="hidden"
+                id="editTrainerId"
+            >
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Trainer Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTrainerName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="editTrainerEmail"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTrainerPhone"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Specialization
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTrainerSpecialization"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Experience (Years)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editTrainerExperience"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Availability
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTrainerAvailability"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        id="editTrainerStatus"
+                    >
+
+                        <option value="active">
+                            Active
+                        </option>
+
+                        <option value="inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Bio
+                    </label>
+
+                    <textarea
+                        id="editTrainerBio"
+                        placeholder="Enter trainer description..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeEditTrainerModal()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    Update Trainer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+    /* =========================================================
+       API CONFIGURATION
+    ========================================================= */
+
+    const API_BASE_URL =
+        "http://127.0.0.1:5000/api";
+
+
+    /* =========================================================
+       GLOBAL DATA
+    ========================================================= */
+
+    let trainers = [];
+
+    let filteredTrainers = [];
+
+
+    /* =========================================================
+       AUTHENTICATION
+    ========================================================= */
+
+    function getToken() {
+
+        return localStorage.getItem(
+            "ironforgeToken"
+        );
+
+    }
+
+
+    function getUser() {
+
+        try {
+
+            return JSON.parse(
+                localStorage.getItem(
+                    "ironforgeUser"
+                )
+            );
+
+        } catch (error) {
+
+            return null;
+
+        }
+
+    }
+
+
+    function checkAdminAccess() {
+
+        const token =
+            getToken();
+
+        const user =
+            getUser();
+
+
+        if (
+            !token ||
+            !user ||
+            user.role !== "admin"
+        ) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+    function logout() {
+
+        localStorage.removeItem(
+            "ironforgeToken"
+        );
+
+        localStorage.removeItem(
+            "ironforgeUser"
+        );
+
+
+        window.location.href =
+            "disicipline.html";
+
+    }
+
+
+    /* =========================================================
+       LOAD TRAINERS
+    ========================================================= */
+
+    async function loadTrainers() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const tableBody =
+            document.getElementById(
+                "trainerTableBody"
+            );
+
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    Loading trainers...
+                </td>
+            </tr>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers`,
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to load trainers"
+                );
+
+            }
+
+
+            trainers =
+                Array.isArray(data)
+                    ? data
+                    : data.trainers || [];
+
+
+            filteredTrainers =
+                [...trainers];
+
+
+            updateStats();
+
+            renderTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Load trainers error:",
+                error
+            );
+
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        Failed to load trainers.
+                    </td>
+                </tr>
+            `;
+
+
+            showToast(
+                error.message ||
+                "Failed to load trainers",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       UPDATE STATS
+    ========================================================= */
+
+    function updateStats() {
+
+        const total =
+            trainers.length;
+
+
+        const active =
+            trainers.filter(
+                trainer =>
+                    trainer.status === "active"
+            ).length;
+
+
+        const inactive =
+            trainers.filter(
+                trainer =>
+                    trainer.status === "inactive"
+            ).length;
+
+
+        const specializations =
+            new Set(
+                trainers
+                    .map(
+                        trainer =>
+                            trainer.specialization
+                    )
+                    .filter(Boolean)
+                    .map(
+                        value =>
+                            value
+                                .toLowerCase()
+                                .trim()
+                    )
+            ).size;
+
+
+        document.getElementById(
+            "totalTrainers"
+        ).textContent = total;
+
+
+        document.getElementById(
+            "activeTrainers"
+        ).textContent = active;
+
+
+        document.getElementById(
+            "inactiveTrainers"
+        ).textContent = inactive;
+
+
+        document.getElementById(
+            "specializationCount"
+        ).textContent =
+            specializations;
+
+    }
+
+
+    /* =========================================================
+       FILTER TRAINERS
+    ========================================================= */
+
+    function filterTrainers() {
+
+        const search =
+            document
+                .getElementById(
+                    "searchInput"
+                )
+                .value
+                .toLowerCase()
+                .trim();
+
+
+        const status =
+            document
+                .getElementById(
+                    "statusFilter"
+                )
+                .value;
+
+
+        filteredTrainers =
+            trainers.filter(
+                trainer => {
+
+                    const name =
+                        (
+                            trainer.name ||
+                            ""
+                        )
+                            .toLowerCase();
+
+
+                    const email =
+                        (
+                            trainer.email ||
+                            ""
+                        )
+                            .toLowerCase();
+
+
+                    const specialization =
+                        (
+                            trainer.specialization ||
+                            ""
+                        )
+                            .toLowerCase();
+
+
+                    const matchesSearch =
+                        name.includes(search) ||
+                        email.includes(search) ||
+                        specialization.includes(search);
+
+
+                    const matchesStatus =
+                        status === "all" ||
+                        trainer.status === status;
+
+
+                    return (
+                        matchesSearch &&
+                        matchesStatus
+                    );
+
+                }
+            );
+
+
+        renderTrainers();
+
+    }
+
+
+    /* =========================================================
+       RENDER TRAINERS
+    ========================================================= */
+
+    function renderTrainers() {
+
+        const tableBody =
+            document.getElementById(
+                "trainerTableBody"
+            );
+
+
+        if (
+            filteredTrainers.length === 0
+        ) {
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        No trainers found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        tableBody.innerHTML =
+            filteredTrainers
+                .map(
+                    trainer => {
+
+                        const id =
+                            trainer._id ||
+                            trainer.id;
+
+
+                        const statusClass =
+                            trainer.status === "active"
+                                ? "status-active"
+                                : "status-inactive";
+
+
+                        const statusText =
+                            trainer.status === "active"
+                                ? "Active"
+                                : "Inactive";
+
+
+                        const statusAction =
+                            trainer.status === "active"
+                                ? `
+                                    <button
+                                        class="action-btn deactivate-btn"
+                                        onclick="deactivateTrainer('${escapeHtml(id || "")}')"
+                                    >
+                                        Deactivate
+                                    </button>
+                                `
+                                : `
+                                    <button
+                                        class="action-btn activate-btn"
+                                        onclick="activateTrainer('${escapeHtml(id || "")}')"
+                                    >
+                                        Activate
+                                    </button>
+                                `;
+
+
+                        return `
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="trainer-name">
+                                        ${escapeHtml(
+                                            trainer.name || "-"
+                                        )}
+                                    </div>
+
+                                    <div class="trainer-email">
+                                        ${escapeHtml(
+                                            trainer.email || "-"
+                                        )}
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    ${escapeHtml(
+                                        trainer.phone || "-"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${escapeHtml(
+                                        trainer.specialization || "-"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${trainer.experience ?? 0} years
+                                </td>
+
+
+                                <td>
+                                    ${escapeHtml(
+                                        trainer.availability || "-"
+                                    )}
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="status ${statusClass}"
+                                    >
+                                        ${statusText}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <button
+                                        class="action-btn"
+                                        onclick="viewTrainer('${escapeHtml(id || "")}')"
+                                    >
+                                        View
+                                    </button>
+
+
+                                    <button
+                                        class="action-btn"
+                                        onclick="openEditTrainerModal('${escapeHtml(id || "")}')"
+                                    >
+                                        Edit
+                                    </button>
+
+
+                                    ${statusAction}
+
+
+                                    <button
+                                        class="action-btn delete-btn"
+                                        onclick="deleteTrainer('${escapeHtml(id || "")}')"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+    }
+
+
+    /* =========================================================
+       CREATE TRAINER
+    ========================================================= */
+
+    async function createTrainer(event) {
+
+        event.preventDefault();
+
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const trainerData = {
+
+            name:
+                document
+                    .getElementById(
+                        "trainerName"
+                    )
+                    .value
+                    .trim(),
+
+
+            email:
+                document
+                    .getElementById(
+                        "trainerEmail"
+                    )
+                    .value
+                    .trim(),
+
+
+            phone:
+                document
+                    .getElementById(
+                        "trainerPhone"
+                    )
+                    .value
+                    .trim(),
+
+
+            specialization:
+                document
+                    .getElementById(
+                        "trainerSpecialization"
+                    )
+                    .value
+                    .trim(),
+
+
+            experience:
+                Number(
+                    document
+                        .getElementById(
+                            "trainerExperience"
+                        )
+                        .value
+                ),
+
+
+            availability:
+                document
+                    .getElementById(
+                        "trainerAvailability"
+                    )
+                    .value
+                    .trim(),
+
+
+            bio:
+                document
+                    .getElementById(
+                        "trainerBio"
+                    )
+                    .value
+                    .trim()
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers`,
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                trainerData
+                            )
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to create trainer"
+                );
+
+            }
+
+
+            showToast(
+                "Trainer created successfully!",
+                "success"
+            );
+
+
+            closeCreateTrainerModal();
+
+
+            document
+                .getElementById(
+                    "createTrainerForm"
+                )
+                .reset();
+
+
+            await loadTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Create trainer error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "Failed to create trainer",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       VIEW TRAINER
+    ========================================================= */
+
+    function viewTrainer(id) {
+
+        const trainer =
+            trainers.find(
+                item =>
+                    String(
+                        item._id ||
+                        item.id
+                    ) ===
+                    String(id)
+            );
+
+
+        if (!trainer) {
+
+            showToast(
+                "Trainer not found",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "detailName"
+        ).textContent =
+            trainer.name || "-";
+
+
+        document.getElementById(
+            "detailEmail"
+        ).textContent =
+            trainer.email || "-";
+
+
+        document.getElementById(
+            "detailPhone"
+        ).textContent =
+            trainer.phone || "-";
+
+
+        document.getElementById(
+            "detailSpecialization"
+        ).textContent =
+            trainer.specialization || "-";
+
+
+        document.getElementById(
+            "detailExperience"
+        ).textContent =
+            `${trainer.experience ?? 0} years`;
+
+
+        document.getElementById(
+            "detailAvailability"
+        ).textContent =
+            trainer.availability || "-";
+
+
+        document.getElementById(
+            "detailStatus"
+        ).textContent =
+            trainer.status || "-";
+
+
+        document.getElementById(
+            "detailCreated"
+        ).textContent =
+            trainer.createdAt
+                ? formatDate(
+                    trainer.createdAt
+                )
+                : "-";
+
+
+        document.getElementById(
+            "detailBio"
+        ).textContent =
+            trainer.bio ||
+            "No bio available";
+
+
+        document
+            .getElementById(
+                "trainerDetailsModal"
+            )
+            .classList.add(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       OPEN EDIT TRAINER MODAL
+    ========================================================= */
+
+    function openEditTrainerModal(id) {
+
+        const trainer =
+            trainers.find(
+                item =>
+                    String(
+                        item._id ||
+                        item.id
+                    ) ===
+                    String(id)
+            );
+
+
+        if (!trainer) {
+
+            showToast(
+                "Trainer not found",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "editTrainerId"
+        ).value =
+            trainer._id ||
+            trainer.id;
+
+
+        document.getElementById(
+            "editTrainerName"
+        ).value =
+            trainer.name || "";
+
+
+        document.getElementById(
+            "editTrainerEmail"
+        ).value =
+            trainer.email || "";
+
+
+        document.getElementById(
+            "editTrainerPhone"
+        ).value =
+            trainer.phone || "";
+
+
+        document.getElementById(
+            "editTrainerSpecialization"
+        ).value =
+            trainer.specialization || "";
+
+
+        document.getElementById(
+            "editTrainerExperience"
+        ).value =
+            trainer.experience ?? 0;
+
+
+        document.getElementById(
+            "editTrainerAvailability"
+        ).value =
+            trainer.availability || "";
+
+
+        document.getElementById(
+            "editTrainerBio"
+        ).value =
+            trainer.bio || "";
+
+
+        document.getElementById(
+            "editTrainerStatus"
+        ).value =
+            trainer.status || "active";
+
+
+        document
+            .getElementById(
+                "editTrainerModal"
+            )
+            .classList.add(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       UPDATE TRAINER
+    ========================================================= */
+
+    async function updateTrainer(event) {
+
+        event.preventDefault();
+
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const trainerId =
+            document
+                .getElementById(
+                    "editTrainerId"
+                )
+                .value
+                .trim();
+
+
+        if (!trainerId) {
+
+            showToast(
+                "Invalid trainer ID",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const trainerData = {
+
+            name:
+                document
+                    .getElementById(
+                        "editTrainerName"
+                    )
+                    .value
+                    .trim(),
+
+
+            email:
+                document
+                    .getElementById(
+                        "editTrainerEmail"
+                    )
+                    .value
+                    .trim(),
+
+
+            phone:
+                document
+                    .getElementById(
+                        "editTrainerPhone"
+                    )
+                    .value
+                    .trim(),
+
+
+            specialization:
+                document
+                    .getElementById(
+                        "editTrainerSpecialization"
+                    )
+                    .value
+                    .trim(),
+
+
+            experience:
+                Number(
+                    document
+                        .getElementById(
+                            "editTrainerExperience"
+                        )
+                        .value
+                ),
+
+
+            availability:
+                document
+                    .getElementById(
+                        "editTrainerAvailability"
+                    )
+                    .value
+                    .trim(),
+
+
+            bio:
+                document
+                    .getElementById(
+                        "editTrainerBio"
+                    )
+                    .value
+                    .trim(),
+
+
+            status:
+                document
+                    .getElementById(
+                        "editTrainerStatus"
+                    )
+                    .value
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers/${trainerId}`,
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                trainerData
+                            )
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to update trainer"
+                );
+
+            }
+
+
+            showToast(
+                "Trainer updated successfully!",
+                "success"
+            );
+
+
+            closeEditTrainerModal();
+
+
+            await loadTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Update trainer error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "Failed to update trainer",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       ACTIVATE TRAINER
+    ========================================================= */
+
+    async function activateTrainer(id) {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to activate this trainer?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers/${id}/activate`,
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        }
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to activate trainer"
+                );
+
+            }
+
+
+            showToast(
+                "Trainer activated successfully!",
+                "success"
+            );
+
+
+            await loadTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Activate trainer error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "Failed to activate trainer",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       DEACTIVATE TRAINER
+    ========================================================= */
+
+    async function deactivateTrainer(id) {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to deactivate this trainer?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers/${id}/deactivate`,
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        }
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to deactivate trainer"
+                );
+
+            }
+
+
+            showToast(
+                "Trainer deactivated successfully!",
+                "success"
+            );
+
+
+            await loadTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Deactivate trainer error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "Failed to deactivate trainer",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       DELETE TRAINER
+    ========================================================= */
+
+    async function deleteTrainer(id) {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "disicipline.html";
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to permanently delete this trainer?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/trainers/${id}`,
+                    {
+
+                        method: "DELETE",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        }
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to delete trainer"
+                );
+
+            }
+
+
+            showToast(
+                "Trainer deleted successfully!",
+                "success"
+            );
+
+
+            await loadTrainers();
+
+
+        } catch (error) {
+
+            console.error(
+                "Delete trainer error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "Failed to delete trainer",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       OPEN CREATE MODAL
+    ========================================================= */
+
+    function openCreateTrainerModal() {
+
+        document
+            .getElementById(
+                "createTrainerModal"
+            )
+            .classList.add(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       CLOSE CREATE MODAL
+    ========================================================= */
+
+    function closeCreateTrainerModal() {
+
+        document
+            .getElementById(
+                "createTrainerModal"
+            )
+            .classList.remove(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       CLOSE DETAILS MODAL
+    ========================================================= */
+
+    function closeDetailsModal() {
+
+        document
+            .getElementById(
+                "trainerDetailsModal"
+            )
+            .classList.remove(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       CLOSE EDIT MODAL
+    ========================================================= */
+
+    function closeEditTrainerModal() {
+
+        document
+            .getElementById(
+                "editTrainerModal"
+            )
+            .classList.remove(
+                "active"
+            );
+
+    }
+
+
+    /* =========================================================
+       FORMAT DATE
+    ========================================================= */
+
+    function formatDate(dateString) {
+
+        const date =
+            new Date(
+                dateString
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "-";
+
+        }
+
+
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+    function escapeHtml(value) {
+
+        return String(value)
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    function showToast(
+        message,
+        type = "success"
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.className =
+            `toast show ${type}`;
+
+
+        setTimeout(
+            () => {
+
+                toast.className =
+                    "toast";
+
+            },
+            3000
+        );
+
+    }
+
+
+    /* =========================================================
+       CLOSE MODALS WHEN CLICKING OUTSIDE
+    ========================================================= */
+
+    window.addEventListener(
+        "click",
+        function(event) {
+
+
+            const createModal =
+                document.getElementById(
+                    "createTrainerModal"
+                );
+
+
+            const detailsModal =
+                document.getElementById(
+                    "trainerDetailsModal"
+                );
+
+
+            const editModal =
+                document.getElementById(
+                    "editTrainerModal"
+                );
+
+
+            if (
+                event.target ===
+                createModal
+            ) {
+
+                closeCreateTrainerModal();
+
+            }
+
+
+            if (
+                event.target ===
+                detailsModal
+            ) {
+
+                closeDetailsModal();
+
+            }
+
+
+            if (
+                event.target ===
+                editModal
+            ) {
+
+                closeEditTrainerModal();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       INITIAL LOAD
+    ========================================================= */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            if (
+                !checkAdminAccess()
+            ) {
+
+                return;
+
+            }
+
+
+            loadTrainers();
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

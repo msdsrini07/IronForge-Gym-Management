@@ -1,0 +1,3650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IronForge | Admin Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0b0b0b;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            height: 75px;
+            background: #111;
+            border-bottom: 1px solid #292929;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 35px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #ff4d00;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            background: #1c120d;
+            color: #ff650f;
+            border: 1px solid #ff4d00;
+
+            padding: 7px 13px;
+            border-radius: 20px;
+
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #ff4d00;
+            color: white;
+
+            padding: 10px 17px;
+            border-radius: 7px;
+
+            cursor: pointer;
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #ff6a2a;
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: 94%;
+            max-width: 1450px;
+            margin: 35px auto;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #121212;
+            border: 1px solid #252525;
+
+            border-radius: 12px;
+            padding: 22px;
+
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: #ff4d00;
+            transform: translateY(-2px);
+        }
+
+        .stat-title {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .pending-number {
+            color: #ffb000;
+        }
+
+        .confirmed-number {
+            color: #25d366;
+        }
+
+        .cancelled-number {
+            color: #ff4444;
+        }
+
+        /* =========================
+           CONTROLS
+        ========================= */
+
+        .controls {
+            background: #121212;
+            border: 1px solid #252525;
+
+            padding: 18px;
+
+            border-radius: 12px;
+
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+
+            margin-bottom: 20px;
+        }
+
+        .search-box,
+        .filter-box {
+            background: #0b0b0b;
+
+            border: 1px solid #303030;
+            color: white;
+
+            padding: 12px 14px;
+
+            border-radius: 7px;
+
+            outline: none;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .filter-box {
+            min-width: 170px;
+        }
+
+        .search-box:focus,
+        .filter-box:focus {
+            border-color: #ff4d00;
+        }
+
+        .refresh-btn {
+            border: none;
+            background: #242424;
+            color: white;
+
+            padding: 12px 18px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .refresh-btn:hover {
+            background: #333;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-container {
+            background: #121212;
+            border: 1px solid #252525;
+
+            border-radius: 12px;
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th {
+            background: #191919;
+            color: #aaa;
+
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            padding: 16px;
+            text-align: left;
+        }
+
+        td {
+            padding: 16px;
+            border-top: 1px solid #252525;
+
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #171717;
+        }
+
+        .customer-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .customer-email {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .program {
+            color: #ff650f;
+            font-weight: bold;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+            font-weight: bold;
+
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #30250b;
+            color: #ffc107;
+        }
+
+        .status-confirmed {
+            background: #0d2b1a;
+            color: #25d366;
+        }
+
+        .status-cancelled {
+            background: #301010;
+            color: #ff4d4d;
+        }
+
+        .status-completed {
+            background: #1d1d1d;
+            color: #aaa;
+        }
+
+        /* =========================
+           ACTION BUTTONS
+        ========================= */
+
+        .actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 7px 10px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .confirm-btn {
+            background: #12351f;
+            color: #35df76;
+        }
+
+        .confirm-btn:hover {
+            background: #1b542e;
+        }
+
+        .cancel-btn {
+            background: #3a1818;
+            color: #ff5c5c;
+        }
+
+        .cancel-btn:hover {
+            background: #591f1f;
+        }
+
+        .delete-btn {
+            background: #292929;
+            color: #ddd;
+        }
+
+        .delete-btn:hover {
+            background: #444;
+            color: white;
+        }
+
+        /* =========================
+           EMPTY / LOADING
+        ========================= */
+
+        .message-row {
+            text-align: center;
+            padding: 45px !important;
+            color: #888;
+        }
+
+        .loading {
+            color: #ff650f;
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            background: #191919;
+            border: 1px solid #333;
+
+            padding: 15px 20px;
+
+            border-radius: 8px;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+            transform: translateY(100px);
+            opacity: 0;
+
+            transition: 0.3s;
+
+            z-index: 999;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: #25d366;
+        }
+
+        .toast.error {
+            border-color: #ff4444;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header {
+                padding: 0 18px;
+            }
+
+            .container {
+                width: 96%;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title h1 {
+                font-size: 26px;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logout-btn {
+                padding: 8px 12px;
+            }
+        }
+        
+/* ADMIN DASHBOARD NAVIGATION */
+
+.admin-layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.admin-sidebar {
+    background: #121212;
+    border: 1px solid #252525;
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 95px;
+}
+
+.admin-nav-btn {
+    display: block;
+    width: 100%;
+    padding: 13px 14px;
+    margin-bottom: 6px;
+    text-align: left;
+    color: #ccc;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.admin-nav-btn:hover,
+.admin-nav-btn.active {
+    background: #2a170f;
+    color: #ff650f;
+}
+
+.admin-content {
+    min-width: 0;
+}
+
+.admin-section {
+    display: none;
+}
+
+.admin-section.active {
+    display: block;
+}
+
+@media (max-width: 800px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+    }
+
+    .admin-nav-btn {
+        margin-bottom: 0;
+    }
+}
+
+/* =================================
+   MEMBER STATUS ACTION BUTTONS
+================================= */
+
+.btn-danger,
+.btn-success {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 115px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Deactivate - Red */
+.btn-danger {
+    color: #ff6b6b;
+    background: rgba(255, 75, 75, 0.12);
+    border-color: rgba(255, 75, 75, 0.3);
+}
+
+.btn-danger:hover {
+    color: #ffffff;
+    background: #e53935;
+    border-color: #e53935;
+    box-shadow: 0 4px 14px rgba(229, 57, 53, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Reactivate - Green */
+.btn-success {
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btn-success:hover {
+    color: #ffffff;
+    background: #16a34a;
+    border-color: #16a34a;
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Keyboard accessibility */
+.btn-danger:focus-visible,
+.btn-success:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+.btn-danger:active,
+.btn-success:active {
+    transform: translateY(0);
+}
+
+/* Member Account Status Badges */
+.member-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+}
+
+.member-active {
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.member-inactive {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ============================
+   ASSIGN MEMBERSHIP FORM
+============================ */
+
+#membershipsSection #assignMembershipForm {
+    margin-top: 24px;
+}
+
+#membershipsSection #assignMembershipForm .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+#membershipsSection #assignMembershipForm .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#membershipsSection #assignMembershipForm label {
+    color: #e5e5e5;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#membershipsSection #assignMembershipForm input,
+#membershipsSection #assignMembershipForm select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    background: #181818;
+    color: #ffffff;
+    border: 1px solid #353535;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+#membershipsSection #assignMembershipForm input:focus,
+#membershipsSection #assignMembershipForm select:focus {
+    outline: none;
+    border-color: #ff5a1f;
+    box-shadow: 0 0 0 2px rgb(255 90 31 / 15%);
+}
+
+#membershipsSection #assignMembershipForm input[readonly] {
+    color: #bdbdbd;
+    cursor: default;
+}
+
+#membershipsSection #assignMembershipBtn {
+    background: #ff5a1f;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
+#membershipsSection #assignMembershipBtn:hover {
+    background: #e84910;
+}
+
+@media (max-width: 700px) {
+    #membershipsSection #assignMembershipForm .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+</style>
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="logo">
+        IRON<span>FORGE</span>
+    </div>
+
+    <div class="admin-info">
+
+        <div class="admin-badge">
+            ADMIN PANEL
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+
+<main class="container">
+
+    <div class="admin-layout">
+
+        <!-- SIDEBAR -->
+        <nav class="admin-sidebar" aria-label="Admin navigation">
+
+            <button class="admin-nav-btn active"
+                    data-section="bookingsSection">
+                📅 Booking Management
+            </button>
+
+            <button class="admin-nav-btn"
+                    data-section="membersSection">
+                👥 Member Management
+            </button>
+
+            <button class="admin-nav-btn"
+                    data-section="membershipsSection">
+                🎫 Membership Management
+            </button>
+
+            <button class="admin-nav-btn"
+                    data-section="trainersSection">
+                🏋️ Trainer Management
+            </button>
+
+            <button class="admin-nav-btn"
+                    data-section="plansSection">
+                📋 Plan Management
+            </button>
+
+        </nav>
+
+
+        <!-- MAIN CONTENT -->
+        <div class="admin-content">
+
+            <!-- 1. BOOKING MANAGEMENT -->
+            <section id="bookingsSection"
+                     class="admin-section active">
+
+                <div class="page-title">
+                    <h1>Booking Management</h1>
+                    <p>Manage customer bookings and their status.</p>
+                </div>
+
+                <!-- BOOKING STATISTICS -->
+                <section class="stats">
+
+                    <div class="stat-card">
+                        <div class="stat-title">Total Bookings</div>
+                        <div class="stat-number" id="totalBookings">0</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-number pending-number"
+                             id="pendingBookings">0</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Confirmed</div>
+                        <div class="stat-number confirmed-number"
+                             id="confirmedBookings">0</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Cancelled</div>
+                        <div class="stat-number cancelled-number"
+                             id="cancelledBookings">0</div>
+                    </div>
+
+                </section>
+
+                <!-- SEARCH AND FILTER -->
+                <section class="controls">
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-box"
+                        placeholder="Search customer, email or program..."
+                        oninput="applyFilters()"
+                    >
+
+                    <select
+                        id="statusFilter"
+                        class="filter-box"
+                        onchange="applyFilters()"
+                    >
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="completed">Completed</option>
+                    </select>
+
+                    <button class="refresh-btn"
+                            type="button"
+                            onclick="loadBookings()">
+                        ↻ Refresh
+                    </button>
+
+                </section>
+
+                <!-- BOOKINGS TABLE -->
+                <section class="table-container">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Program</th>
+                                <th>Trainer</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="bookingsTable">
+                            <tr>
+                                <td colspan="7"
+                                    class="message-row loading">
+                                    Loading bookings...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </section>
+
+            </section>
+
+
+            <!-- 2. MEMBER MANAGEMENT -->
+            <section id="membersSection" class="admin-section">
+
+                <div class="page-title">
+                    <h1>Member Management</h1>
+                    <p>View and manage gym member accounts.</p>
+                </div>
+
+                <section class="table-container">
+
+                    <div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+
+                        <input
+                            id="memberSearch"
+                            class="search-box"
+                            type="text"
+                            placeholder="Search member name or email..."
+                            oninput="filterMembers()"
+                        >
+
+                        <button
+                            class="refresh-btn"
+                            type="button"
+                            onclick="loadMembers()"
+                        >
+                            ↻ Refresh Members
+                        </button>
+
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Member Name</th>
+                                <th>Email</th>
+                                <th>Account ID</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="membersTable">
+                            <tr>
+                                <td colspan="4" class="message-row">
+                                    Click Member Management to load members.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </section>
+
+            </section>
+
+
+            <!-- 3. MEMBERSHIP MANAGEMENT -->
+           
+<section id="membershipsSection" class="admin-section">
+
+    <div class="page-title">
+        <h1>Membership Management</h1>
+        <p>View member plans, membership status and expiry dates.</p>
+    </div>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-title">Total Members</div>
+            <div class="stat-number" id="membershipTotal">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Active Memberships</div>
+            <div class="stat-number confirmed-number" id="membershipActive">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Expiring Soon</div>
+            <div class="stat-number pending-number" id="membershipExpiring">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Expired</div>
+            <div class="stat-number cancelled-number" id="membershipExpired">0</div>
+        </div>
+    </section>
+
+    <section class="controls">
+        <input
+            type="text"
+            id="membershipSearch"
+            class="search-box"
+            placeholder="Search member name or email..."
+            oninput="filterMemberships()"
+        >
+
+        <select
+            id="membershipStatusFilter"
+            class="filter-box"
+            onchange="filterMemberships()"
+        >
+            <option value="all">All Memberships</option>
+            <option value="active">Active</option>
+            <option value="expiring_soon">Expiring Soon</option>
+            <option value="expired">Expired</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="none">No Membership</option>
+        </select>
+
+        <button
+            type="button"
+            class="refresh-btn"
+            onclick="loadMemberships()"
+        >
+            ↻ Refresh
+        </button>
+    </section>
+    
+    <!-- ASSIGN MEMBERSHIP FORM -->
+    <section class="table-container" style="margin-bottom: 24px; padding: 24px;">
+
+        <div class="page-title">
+            <h2>Assign Membership</h2>
+            <p>Assign a membership plan to a gym customer.</p>
+        </div>
+
+        <form id="assignMembershipForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="membershipUser">Select Member</label>
+                    <select id="membershipUser" name="userId" required>
+                        <option value="">Choose a member</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="membershipPlan">Select Plan</label>
+                    <select id="membershipPlan" name="planId" required>
+                        <option value="">Choose a membership plan</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="membershipStartDate">Start Date</label>
+                    <input
+                        type="date"
+                        id="membershipStartDate"
+                        name="startDate"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="membershipExpiryPreview">Expected Expiry Date</label>
+                    <input
+                        type="text"
+                        id="membershipExpiryPreview"
+                        placeholder="Select a plan and start date"
+                        readonly
+                    >
+                </div>
+
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+
+                <button type="submit" class="refresh-btn" id="assignMembershipBtn">
+                    Assign Membership
+                </button>
+
+                <button type="reset" class="refresh-btn">
+                    Clear Form
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+    <!-- END ASSIGN MEMBERSHIP FORM -->
+
+
+    <section class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Start Date</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    <th>Remaining Days</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="membershipsTable">
+                <tr>
+                    <td colspan="7" class="message-row">
+                        Loading memberships...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+</section>
+
+
+            <!-- 4. TRAINER MANAGEMENT -->
+           
+<section id="trainersSection" class="admin-section">
+
+    <div class="page-title">
+        <h1>Trainer Management</h1>
+        <p>View and manage IronForge gym trainers.</p>
+    </div>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-title">Total Trainers</div>
+            <div class="stat-number" id="totalTrainers">0</div>
+        </div>
+    </section>
+
+    <section class="controls">
+        <input
+            type="text"
+            id="trainerSearch"
+            class="search-box"
+            placeholder="Search trainer name or specialization..."
+            oninput="filterTrainers()"
+        >
+
+        <button
+            type="button"
+            class="refresh-btn"
+            onclick="loadTrainers()"
+        >
+            ↻ Refresh Trainers
+        </button>
+    </section>
+
+    <section class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Trainer Name</th>
+                    <th>Specialization</th>
+                    <th>Experience</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+
+            <tbody id="trainersTable">
+                <tr>
+                    <td colspan="5" class="message-row">
+                        Click Trainer Management to load trainers.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+</section>
+
+</section>
+
+
+           
+<!-- 5. PLAN MANAGEMENT -->
+<section id="plansSection" class="admin-section">
+
+    <div class="page-title">
+        <h1>Plan Management</h1>
+        <p>Create and manage IronForge membership plans.</p>
+    </div>
+
+    <!-- PLAN STATISTICS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Plans</h3>
+            <p id="planTotal">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Active Plans</h3>
+            <p id="planActive">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Inactive Plans</h3>
+            <p id="planInactive">0</p>
+        </div>
+    </div>
+
+    <!-- PLAN ACTIONS -->
+    <div class="table-container" style="margin-top: 24px; padding: 20px;">
+
+        <div style="display:flex; justify-content:space-between;
+                    align-items:center; flex-wrap:wrap; gap:12px;">
+
+            <div>
+                <h2>Membership Plans</h2>
+                <p>View, create and update gym membership plans.</p>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="admin-nav-btn"
+                        id="refreshPlansBtn">
+                    ↻ Refresh
+                </button>
+
+                <button type="button" class="admin-nav-btn active"
+                        id="addPlanBtn">
+                    + Add Plan
+                </button>
+            </div>
+        </div>
+
+        <!-- SEARCH AND FILTER -->
+        <div style="display:flex; gap:12px; flex-wrap:wrap;
+                    margin:20px 0;">
+
+            <input type="text" id="planSearch"
+                   placeholder="Search plans by name..."
+                   style="flex:1; min-width:200px; padding:12px;
+                          border-radius:8px;">
+
+            <select id="planStatusFilter"
+                    style="padding:12px; border-radius:8px;">
+                <option value="all">All Plans</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+
+        <!-- PLAN TABLE -->
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan Name</th>
+                        <th>Price</th>
+                        <th>Duration</th>
+                        <th>Features</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="plansTable">
+                    <tr>
+                        <td colspan="7" class="message-row">
+                            Click Plan Management to load plans.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT PLAN FORM -->
+    <div id="planFormContainer" class="table-container"
+         style="display:none; margin-top:24px; padding:24px;">
+
+        <h2 id="planFormTitle">Add New Plan</h2>
+        <p>Enter the membership plan details below.</p>
+         
+<div style="margin-top: 20px;">
+    <label for="planTemplate">Choose a Plan Template</label>
+
+    <select id="planTemplate"
+        style="width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px;">
+
+        <option value="">-- Select a suggested plan --</option>
+        <option value="basic">Basic Plan Template</option>
+        <option value="premium">Premium Plan Template</option>
+        <option value="pro">Pro Plan Template</option>
+        <option value="custom">Custom Plan</option>
+
+    </select>
+
+    <small style="display:block; margin-top:8px; color:#999;">
+        Select a template to automatically suggest the price,
+        duration, description and features.
+    </small>
+</div>
+
+        <form id="planForm">
+
+            <input type="hidden" id="planId">
+
+            <div style="display:grid; grid-template-columns:
+                        repeat(auto-fit, minmax(220px, 1fr));
+                        gap:16px; margin-top:20px;">
+
+                <div>
+                    <label for="planName">Plan Name *</label>
+                    <input type="text" id="planName"
+                           placeholder="Example: Iron Pro"
+                           maxlength="80" required
+                           style="width:100%; padding:12px;
+                                  margin-top:8px;">
+                </div>
+
+                <div>
+                    <label for="planPrice">Price (₹) *</label>
+                    <input type="number" id="planPrice"
+                           placeholder="1999" min="0" step="0.01"
+                           required
+                           style="width:100%; padding:12px;
+                                  margin-top:8px;">
+                </div>
+
+                <div>
+                    <label for="planDuration">Duration (days) *</label>
+                    <input type="number" id="planDuration"
+                           placeholder="30" min="1" step="1"
+                           required
+                           style="width:100%; padding:12px;
+                                  margin-top:8px;">
+                </div>
+            </div>
+
+            <div style="margin-top:18px;">
+                <label for="planDescription">Description</label>
+                <textarea id="planDescription" rows="3"
+                          maxlength="500"
+                          placeholder="Describe this membership plan..."
+                          style="width:100%; padding:12px;
+                                 margin-top:8px;"></textarea>
+            </div>
+
+            <div style="margin-top:18px;">
+                <label for="planFeatures">
+                    Features (enter one feature per line)
+                </label>
+                <textarea id="planFeatures" rows="5"
+                          placeholder="Access to gym equipment&#10;Personal trainer support&#10;Locker facility"
+                          style="width:100%; padding:12px;
+                                 margin-top:8px;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px;
+                        margin-top:20px; flex-wrap:wrap;">
+
+                <button type="submit" class="admin-nav-btn active"
+                        id="savePlanBtn">
+                    Save Plan
+                </button>
+
+                <button type="button" class="admin-nav-btn"
+                        id="cancelPlanBtn">
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</section>
+
+
+        </div>
+        <!-- END ADMIN CONTENT -->
+
+    </div>
+    <!-- END ADMIN LAYOUT -->
+
+</main>
+
+
+
+<!-- =========================
+     TOAST
+========================= -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script>
+
+    // ==========================================
+    // CONFIG
+    // ==========================================
+
+    const API_BASE_URL =
+        "http://127.0.0.1:5000/api";
+
+
+    let allBookings = [];
+
+
+    // ==========================================
+    // GET TOKEN
+    // ==========================================
+
+    function getToken() {
+
+        return localStorage.getItem(
+            "ironforgeToken"
+        );
+
+    }
+
+
+    // ==========================================
+    // CHECK ADMIN LOGIN
+    // ==========================================
+
+    function checkAdmin() {
+
+        const token =
+            getToken();
+
+        const userData =
+            localStorage.getItem(
+                "ironforgeUser"
+            );
+
+        if (!token || !userData) {
+
+            alert(
+                "Please login as admin first."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+        try {
+
+            const user =
+                JSON.parse(userData);
+
+           if (String(user.role || "").toLowerCase() !== "admin") {
+
+                alert(
+                    "Admin access required."
+                );
+
+                window.location.href =
+                    "member-dashboard.html";
+
+                return false;
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            localStorage.removeItem(
+                "ironforgeToken"
+            );
+
+            localStorage.removeItem(
+                "ironforgeUser"
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+        return true;
+
+    }
+    
+
+/* ============================
+   MEMBER MANAGEMENT
+============================ */
+
+let allMembers = [];
+
+async function loadMembers() {
+    if (!checkAdmin()) return;
+
+    const table = document.getElementById("membersTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="4" class="message-row loading">
+                Loading members...
+            </td>
+        </tr>
+    `;
+
+
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/members`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to load members");
+        }
+
+        allMembers = Array.isArray(data.members) ? data.members : [];
+        renderMembers(allMembers);
+
+    } catch (error) {
+        console.error("Load members error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="4" class="message-row">
+                    Failed to load members.
+                </td>
+            </tr>
+        `;
+
+        showToast(error.message, "error");
+    }
+}
+
+function filterMembers() {
+    const search = (
+        document.getElementById("memberSearch").value || ""
+    ).toLowerCase().trim();
+
+    const filteredMembers = allMembers.filter(member =>
+        (member.name || "").toLowerCase().includes(search) ||
+        (member.email || "").toLowerCase().includes(search)
+    );
+
+    renderMembers(filteredMembers);
+}
+
+
+function renderMembers(members) {
+    const table = document.getElementById("membersTable");
+
+    if (!members.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="message-row">
+                    No members found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    table.innerHTML = members.map(member => `
+        <tr>
+            <td>${escapeHtml(member.name || "Unnamed Member")}</td>
+            <td>${escapeHtml(member.email || "-")}</td>
+            <td>${escapeHtml(member.userId || "-")}</td>
+           
+<td>
+    <span class="status status-confirmed">
+        ${escapeHtml(member.role || "customer")}
+    </span>
+
+    <span class="member-status-badge ${
+        member.isActive === false ? "member-inactive" : "member-active"
+    }">
+        ${member.isActive === false ? "Deactivated" : "Active"}
+    </span>
+</td>
+
+            <td>
+                ${
+                    member.isActive === false
+                        ? `<button class="btn btn-success" onclick="toggleMemberStatus('${member.userId}', true)">Reactivate</button>`
+                        : `<button class="btn btn-danger" onclick="toggleMemberStatus('${member.userId}', false)">Deactivate</button>`
+                }
+            </td>
+        </tr>
+    `).join("");
+}
+
+async function toggleMemberStatus(userId, isActive) {
+    const action = isActive ? "reactivate" : "deactivate";
+
+    const confirmed = confirm(
+        `Are you sure you want to ${action} this member?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/admin/members/${encodeURIComponent(userId)}/status`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ isActive })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || `Failed to ${action} member`
+            );
+        }
+
+        showToast(data.message, "success");
+
+        await loadMembers();
+
+    } catch (error) {
+        console.error("Update member status error:", error);
+        showToast(error.message || "Something went wrong", "error");
+    }
+}
+
+
+
+/* ============================
+   MEMBERSHIP MANAGEMENT
+============================ */
+
+let allMemberships = [];
+
+async function loadMemberships() {
+    if (!checkAdmin()) return;
+
+    const table = document.getElementById("membershipsTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="7" class="message-row loading">
+                Loading memberships...
+            </td>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/members`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to load memberships");
+        }
+
+        allMemberships = Array.isArray(data.members) ? data.members : [];
+
+        updateMembershipStats(allMemberships);
+        filterMemberships();
+
+    } catch (error) {
+        console.error("Load memberships error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7" class="message-row">
+                    Failed to load memberships.
+                </td>
+            </tr>
+        `;
+
+        showToast(error.message, "error");
+    }
+}
+
+function updateMembershipStats(members) {
+    document.getElementById("membershipTotal").textContent = members.length;
+
+    document.getElementById("membershipActive").textContent =
+        members.filter(m => m.membership?.status === "active").length;
+
+    document.getElementById("membershipExpiring").textContent =
+        members.filter(m =>
+            m.membership?.expiryStatus === "expiring_soon"
+        ).length;
+
+    document.getElementById("membershipExpired").textContent =
+        members.filter(m => m.membership?.status === "expired").length;
+}
+
+function filterMemberships() {
+    const search = (
+        document.getElementById("membershipSearch").value || ""
+    ).trim().toLowerCase();
+
+    const status = document.getElementById("membershipStatusFilter").value;
+
+    const filtered = allMemberships.filter(member => {
+        const matchesSearch =
+            (member.name || "").toLowerCase().includes(search) ||
+            (member.email || "").toLowerCase().includes(search);
+
+        const membership = member.membership;
+        let matchesStatus = true;
+
+        if (status === "none") {
+            matchesStatus = !membership;
+        } else if (status === "expiring_soon") {
+            matchesStatus =
+                membership?.expiryStatus === "expiring_soon";
+        } else if (status !== "all") {
+            matchesStatus = membership?.status === status;
+        }
+
+        return matchesSearch && matchesStatus;
+    });
+
+    renderMemberships(filtered);
+}
+
+
+function renderMemberships(members) {
+    const table = document.getElementById("membershipsTable");
+
+    if (!members.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="8" class="message-row">
+                    No matching memberships found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    table.innerHTML = members.map(member => {
+        const membership = member.membership;
+
+        const planName = membership?.planId?.name ||
+            membership?.plan || "No Plan";
+
+        const status = (
+            membership?.expiryStatus ||
+            membership?.status ||
+            "No Membership"
+        ).toLowerCase();
+
+        const statusClass =
+            status === "active" ? "confirmed" :
+            status === "expiring_soon" ? "pending" :
+            ["expired", "cancelled"].includes(status)
+                ? "cancelled" : "";
+
+        const canRenew =
+            membership &&
+            membership.membershipId &&
+            ["active", "expired"].includes(membership.status);
+
+        return `
+            <tr>
+                <td>${escapeHtml(member.name || "Unnamed Member")}</td>
+                <td>${escapeHtml(member.email || "-")}</td>
+                <td>${escapeHtml(planName)}</td>
+                <td>${membership?.startDate
+                    ? formatDate(membership.startDate) : "-"}</td>
+                <td>${membership?.expiryDate
+                    ? formatDate(membership.expiryDate) : "-"}</td>
+                <td>
+                    <span class="status ${statusClass}">
+                        ${escapeHtml(status.replaceAll("_", " "))}
+                    </span>
+                </td>
+                <td>${membership
+                    ? Number(membership.remainingDays ?? 0)
+                    : "-"}</td>
+                <td>
+                    ${canRenew ? `
+                        <button
+                            type="button"
+                            class="refresh-btn"
+                            onclick="renewMembership('${escapeHtml(membership.membershipId)}')"
+                        >
+                            Renew
+                        </button>
+                    ` : "-"}
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+async function renewMembership(membershipId) {
+    if (!checkAdmin()) return;
+
+    const member = allMemberships.find(
+        item => item.membership?.membershipId === membershipId
+    );
+
+    if (!member) {
+        showToast("Membership details not found. Refresh and try again.", "error");
+        return;
+    }
+
+    const planSelect = document.getElementById("membershipPlan");
+
+    // Load plans if the dropdown is empty.
+    if (!planSelect.options.length || !allPlans.length) {
+        await loadAssignmentDropdowns();
+    }
+
+    const activePlans = allPlans.filter(plan => plan.active === true);
+
+    if (!activePlans.length) {
+        showToast("No active plans available for renewal.", "error");
+        return;
+    }
+
+    const planNames = activePlans.map(
+        plan => `${plan.name} - ₹${plan.price} (${plan.duration} days)`
+    );
+
+    const choice = window.prompt(
+        "Choose a plan number to renew:\n" +
+        planNames.map((name, index) => `${index + 1}. ${name}`).join("\n")
+    );
+
+    if (choice === null) return;
+
+   const selectedIndex = Number.parseInt(choice.trim(), 10) - 1;
+
+if (
+    choice.trim() === "" ||
+    !Number.isInteger(selectedIndex) ||
+    selectedIndex < 0 ||
+    selectedIndex >= activePlans.length
+) {
+    showToast("Invalid plan selection.", "error");
+    return;
+}
+
+const selectedPlan = activePlans[selectedIndex];
+
+    const confirmed = window.confirm(
+        `Renew ${member.name}'s membership with ${selectedPlan.name}?\n\n` +
+        "The current membership will be preserved in history."
+    );
+
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/membership/${encodeURIComponent(membershipId)}/renew`,
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    planId: selectedPlan._id
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Membership renewal failed");
+        }
+
+        showToast(data.message || "Membership renewed successfully!", "success");
+
+        await loadMemberships();
+        await loadAssignmentDropdowns();
+
+    } catch (error) {
+        console.error("Renew membership error:", error);
+        showToast(error.message, "error");
+    }
+}
+
+
+/* ============================
+   ASSIGN MEMBERSHIP - DROPDOWNS
+============================ */
+
+async function loadAssignmentDropdowns() {
+    if (!checkAdmin()) return;
+
+    const userSelect = document.getElementById("membershipUser");
+    const planSelect = document.getElementById("membershipPlan");
+
+    try {
+        // Load customers from the existing members API
+        const membersResponse = await fetch(
+            `${API_BASE_URL}/admin/members`,
+            {
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const membersData = await membersResponse.json();
+
+        if (!membersResponse.ok) {
+            throw new Error(
+                membersData.message || "Failed to load customers"
+            );
+        }
+
+        const customers = (membersData.members || [])
+            .filter(member => member.role === "customer" && member.isActive !== false);
+
+        userSelect.innerHTML = `
+            <option value="">Choose a member</option>
+            ${customers.map(member => `
+                <option value="${escapeHtml(member.userId)}">
+                    ${escapeHtml(member.name || "Unnamed Member")} - ${escapeHtml(member.email || "")}
+                </option>
+            `).join("")}
+        `;
+
+        // Load membership plans from the existing plans API
+        const plansResponse = await fetch(
+            `${API_BASE_URL}/admin/plans`,
+            {
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const plansData = await plansResponse.json();
+
+        if (!plansResponse.ok) {
+            throw new Error(
+                plansData.message || "Failed to load plans"
+            );
+        }
+
+        const activePlans = (plansData.plans || [])
+            .filter(plan => plan.active === true);
+
+        allPlans = plansData.plans || [];
+
+        planSelect.innerHTML = `
+            <option value="">Choose a membership plan</option>
+            ${activePlans.map(plan => `
+                <option value="${escapeHtml(plan._id)}">
+                    ${escapeHtml(plan.name)} - ₹${Number(plan.price).toLocaleString("en-IN")} (${Number(plan.duration)} days)
+                </option>
+            `).join("")}
+        `;
+
+        if (customers.length === 0) {
+            userSelect.innerHTML = `
+                <option value="">No active customers available</option>
+            `;
+        }
+
+        if (activePlans.length === 0) {
+            planSelect.innerHTML = `
+                <option value="">No active plans available</option>
+            `;
+        }
+
+    } catch (error) {
+        console.error("Assignment dropdown error:", error);
+        showToast(error.message, "error");
+    }
+}
+
+
+/* ============================
+   MEMBERSHIP EXPIRY PREVIEW
+============================ */
+
+function updateMembershipExpiryPreview() {
+    const planSelect = document.getElementById("membershipPlan");
+    const startDateInput = document.getElementById("membershipStartDate");
+    const expiryPreview = document.getElementById("membershipExpiryPreview");
+
+    if (!planSelect || !startDateInput || !expiryPreview) {
+        console.error("Membership form elements not found");
+        return;
+    }
+
+    const selectedPlanId = planSelect.value;
+    const startDateValue = startDateInput.value;
+
+    if (!selectedPlanId || !startDateValue) {
+        expiryPreview.value = "";
+        return;
+    }
+
+    // Find selected plan from the existing plans array
+    const selectedPlan = allPlans.find(
+        plan => String(plan._id) === selectedPlanId
+    );
+
+    if (!selectedPlan) {
+        console.error("Selected plan not found in allPlans", selectedPlanId);
+        expiryPreview.value = "";
+        return;
+    }
+
+    const duration = Number(selectedPlan.duration);
+
+    if (!Number.isFinite(duration) || duration <= 0) {
+        console.error("Invalid plan duration", selectedPlan.duration);
+        expiryPreview.value = "";
+        return;
+    }
+
+    const expiryDate = new Date(`${startDateValue}T00:00:00`);
+
+    if (isNaN(expiryDate.getTime())) {
+        expiryPreview.value = "";
+        return;
+    }
+
+    expiryDate.setDate(expiryDate.getDate() + duration);
+
+    const day = String(expiryDate.getDate()).padStart(2, "0");
+    const month = String(expiryDate.getMonth() + 1).padStart(2, "0");
+    const year = expiryDate.getFullYear();
+
+    expiryPreview.value = `${day}-${month}-${year}`;
+}
+
+// Listen for changes on the form
+document.getElementById("membershipPlan").onchange =
+    updateMembershipExpiryPreview;
+
+document.getElementById("membershipStartDate").onchange =
+    updateMembershipExpiryPreview;
+
+
+
+/* ============================
+   ASSIGN MEMBERSHIP - SUBMIT
+============================ */
+
+const assignMembershipForm = document.getElementById("assignMembershipForm");
+
+assignMembershipForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (!checkAdmin()) return;
+
+    const userId = document.getElementById("membershipUser").value;
+    const planId = document.getElementById("membershipPlan").value;
+    const startDate = document.getElementById("membershipStartDate").value;
+    const assignButton = document.getElementById("assignMembershipBtn");
+
+    if (!userId || !planId || !startDate) {
+        showToast("Please select a member, plan and start date.", "error");
+        return;
+    }
+
+    try {
+        assignButton.disabled = true;
+        assignButton.textContent = "Assigning...";
+
+        const response = await fetch(`${API_BASE_URL}/membership`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userId,
+                planId,
+                startDate
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to assign membership");
+        }
+
+        showToast(data.message || "Membership assigned successfully!", "success");
+
+        assignMembershipForm.reset();
+
+        document.getElementById("membershipExpiryPreview").value = "";
+
+        await loadMemberships();
+        await loadAssignmentDropdowns();
+
+    } catch (error) {
+        console.error("Assign membership error:", error);
+        showToast(error.message, "error");
+    } finally {
+        assignButton.disabled = false;
+        assignButton.textContent = "Assign Membership";
+    }
+});
+
+
+/* ============================
+   TRAINER MANAGEMENT
+============================ */
+
+let allTrainers = [];
+
+async function loadTrainers() {
+    if (!checkAdmin()) return;
+
+    const table = document.getElementById("trainersTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="5" class="message-row loading">
+                Loading trainers...
+            </td>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/admin/trainers`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to load trainers");
+        }
+
+        allTrainers = Array.isArray(data.trainers)
+            ? data.trainers
+            : [];
+
+        document.getElementById("totalTrainers").textContent =
+            allTrainers.length;
+
+        filterTrainers();
+
+    } catch (error) {
+        console.error("Load trainers error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="message-row">
+                    Failed to load trainers.
+                </td>
+            </tr>
+        `;
+
+        showToast(error.message, "error");
+    }
+}
+
+function filterTrainers() {
+    const search = (
+        document.getElementById("trainerSearch").value || ""
+    ).trim().toLowerCase();
+
+    const filteredTrainers = allTrainers.filter(trainer => {
+        const name = String(trainer.name || "").toLowerCase();
+        const specialization = String(
+            trainer.specialization || ""
+        ).toLowerCase();
+
+        return name.includes(search) ||
+            specialization.includes(search);
+    });
+
+    renderTrainers(filteredTrainers);
+}
+
+function renderTrainers(trainers) {
+    const table = document.getElementById("trainersTable");
+
+    if (!trainers.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="message-row">
+                    No trainers found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    table.innerHTML = trainers.map(trainer => `
+        <tr>
+            <td>${escapeHtml(trainer.name || "-")}</td>
+            <td>${escapeHtml(trainer.specialization || "-")}</td>
+            <td>${escapeHtml(
+                trainer.experience != null
+                    ? String(trainer.experience)
+                    : "-"
+            )}</td>
+            <td>${escapeHtml(trainer.email || "-")}</td>
+            <td>${escapeHtml(trainer.phone || "-")}</td>
+        </tr>
+    `).join("");
+}
+
+
+
+    // ==========================================
+    // LOAD BOOKINGS
+    // ==========================================
+
+    async function loadBookings() {
+
+        if (!checkAdmin()) {
+            return;
+        }
+
+
+        const table =
+            document.getElementById(
+                "bookingsTable"
+            );
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="message-row loading"
+                >
+                    Loading bookings...
+                </td>
+
+            </tr>
+
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/bookings`,
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${getToken()}`,
+
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to load bookings"
+                );
+
+            }
+
+
+            allBookings =
+                data.bookings || data;
+
+
+            if (!Array.isArray(allBookings)) {
+
+                allBookings = [];
+
+            }
+
+
+            updateStats();
+
+            applyFilters();
+
+
+        } catch (error) {
+
+            console.error(
+                "Load bookings error:",
+                error
+            );
+
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="message-row"
+                    >
+                        Failed to load bookings.
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            showToast(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // UPDATE STATISTICS
+    // ==========================================
+
+    function updateStats() {
+
+        const total =
+            allBookings.length;
+
+
+        const pending =
+            allBookings.filter(
+                booking =>
+                    booking.status ===
+                    "pending"
+            ).length;
+
+
+        const confirmed =
+            allBookings.filter(
+                booking =>
+                    booking.status ===
+                    "confirmed"
+            ).length;
+
+
+        const cancelled =
+            allBookings.filter(
+                booking =>
+                    booking.status ===
+                    "cancelled"
+            ).length;
+
+
+        document.getElementById(
+            "totalBookings"
+        ).textContent = total;
+
+
+        document.getElementById(
+            "pendingBookings"
+        ).textContent = pending;
+
+
+        document.getElementById(
+            "confirmedBookings"
+        ).textContent = confirmed;
+
+
+        document.getElementById(
+            "cancelledBookings"
+        ).textContent = cancelled;
+
+    }
+
+
+    // ==========================================
+    // SEARCH + FILTER
+    // ==========================================
+
+    function applyFilters() {
+
+        const search =
+            document
+                .getElementById(
+                    "searchInput"
+                )
+                .value
+                .toLowerCase()
+                .trim();
+
+
+        const status =
+            document
+                .getElementById(
+                    "statusFilter"
+                )
+                .value;
+
+
+        const filtered =
+            allBookings.filter(
+                booking => {
+
+                    const customer =
+                        booking.user || {};
+
+
+                    const customerName =
+                        (
+                            customer.name ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const customerEmail =
+                        (
+                            customer.email ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const program =
+                        (
+                            booking.program ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const matchesSearch =
+                        customerName.includes(search) ||
+                        customerEmail.includes(search) ||
+                        program.includes(search);
+
+
+                    const matchesStatus =
+                        status === "all" ||
+                        booking.status === status;
+
+
+                    return (
+                        matchesSearch &&
+                        matchesStatus
+                    );
+
+                }
+            );
+
+
+        renderBookings(filtered);
+
+    }
+
+
+    // ==========================================
+    // RENDER BOOKINGS
+    // ==========================================
+
+    function renderBookings(bookings) {
+
+        const table =
+            document.getElementById(
+                "bookingsTable"
+            );
+
+
+        if (!bookings.length) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="message-row"
+                    >
+                        No bookings found.
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            bookings
+                .map(
+                    booking =>
+                        createBookingRow(
+                            booking
+                        )
+                )
+                .join("");
+
+    }
+
+
+    // ==========================================
+    // CREATE BOOKING ROW
+    // ==========================================
+
+    function createBookingRow(
+        booking
+    ) {
+
+        const user =
+            booking.user || {};
+
+
+        const trainer =
+            booking.trainer || {};
+
+
+        const customerName =
+            user.name ||
+            "Unknown Customer";
+
+
+        const customerEmail =
+            user.email ||
+            "-";
+
+
+        const trainerName =
+            trainer.name ||
+            "Not assigned";
+
+
+        const program =
+            booking.program ||
+            "-";
+
+
+        const bookingDate =
+            formatDate(
+                booking.bookingDate
+            );
+
+
+        const startTime =
+            booking.startTime ||
+            "-";
+
+
+        const endTime =
+            booking.endTime ||
+            "-";
+
+
+        const status =
+            booking.status ||
+            "pending";
+
+
+        let actionButtons = "";
+
+
+        // ===============================
+        // PENDING
+        // ===============================
+
+        if (
+            status === "pending"
+        ) {
+
+            actionButtons += `
+
+                <button
+                    class="action-btn confirm-btn"
+                    onclick="confirmBooking('${booking._id}')"
+                >
+                    Confirm
+                </button>
+
+            `;
+
+            actionButtons += `
+
+                <button
+                    class="action-btn cancel-btn"
+                    onclick="cancelBooking('${booking._id}')"
+                >
+                    Cancel
+                </button>
+
+            `;
+
+        }
+
+
+        // ===============================
+        // CONFIRMED
+        // ===============================
+
+        else if (
+            status === "confirmed"
+        ) {
+
+            actionButtons += `
+
+                <button
+                    class="action-btn cancel-btn"
+                    onclick="cancelBooking('${booking._id}')"
+                >
+                    Cancel
+                </button>
+
+            `;
+
+        }
+
+
+        // ===============================
+        // DELETE
+        // ===============================
+
+        actionButtons += `
+
+            <button
+                class="action-btn delete-btn"
+                onclick="deleteBooking('${booking._id}')"
+            >
+                Delete
+            </button>
+
+        `;
+
+
+        return `
+
+            <tr>
+
+                <td>
+
+                    <div class="customer-name">
+                        ${escapeHtml(customerName)}
+                    </div>
+
+                    <div class="customer-email">
+                        ${escapeHtml(customerEmail)}
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <span class="program">
+                        ${escapeHtml(program)}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(trainerName)}
+
+                </td>
+
+
+                <td>
+
+                    ${bookingDate}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(startTime)}
+                    -
+                    ${escapeHtml(endTime)}
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status status-${status}"
+                    >
+                        ${status}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <div class="actions">
+
+                        ${actionButtons}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    // ==========================================
+    // CONFIRM BOOKING
+    // ==========================================
+
+    async function confirmBooking(
+        bookingId
+    ) {
+
+        const confirmed =
+            confirm(
+                "Confirm this booking?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/bookings/${bookingId}/confirm`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${getToken()}`,
+
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to confirm booking"
+                );
+
+            }
+
+
+            showToast(
+                "Booking confirmed successfully",
+                "success"
+            );
+
+
+            await loadBookings();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // CANCEL BOOKING
+    // ==========================================
+
+    async function cancelBooking(
+        bookingId
+    ) {
+
+        const confirmed =
+            confirm(
+                "Cancel this booking?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/bookings/${bookingId}/cancel`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${getToken()}`,
+
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to cancel booking"
+                );
+
+            }
+
+
+            showToast(
+                "Booking cancelled successfully",
+                "success"
+            );
+
+
+            await loadBookings();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // DELETE BOOKING
+    // ==========================================
+
+    async function deleteBooking(
+        bookingId
+    ) {
+
+        const confirmed =
+            confirm(
+                "Delete this booking permanently?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/admin/bookings/${bookingId}`,
+                    {
+                        method: "DELETE",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${getToken()}`,
+
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to delete booking"
+                );
+
+            }
+
+
+            showToast(
+                "Booking deleted successfully",
+                "success"
+            );
+
+
+            await loadBookings();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // FORMAT DATE
+    // ==========================================
+
+    function formatDate(
+        dateString
+    ) {
+
+        if (!dateString) {
+            return "-";
+        }
+
+
+        const date =
+            new Date(dateString);
+
+
+        if (isNaN(date.getTime())) {
+            return "-";
+        }
+
+
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+
+    function showToast(
+        message,
+        type = "success"
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.className =
+            `toast ${type} show`;
+
+
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+    }
+
+
+    // ==========================================
+    // LOGOUT
+    // ==========================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "ironforgeToken"
+        );
+
+        localStorage.removeItem(
+            "ironforgeUser"
+        );
+
+
+       window.location.href = "disicipline.html";
+
+    }
+/* =========================================
+   ADMIN SIDEBAR NAVIGATION
+========================================= */
+
+document.querySelectorAll(".admin-sidebar .admin-nav-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const targetId = button.dataset.section;
+
+        // Sidebar buttons mattum active state change aagum
+        document.querySelectorAll(".admin-sidebar .admin-nav-btn").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        // Ella admin sections-ai hide pannuvom
+        document.querySelectorAll(".admin-section").forEach(section => {
+            section.classList.remove("active");
+        });
+
+        // Click panna sidebar button active aagum
+        button.classList.add("active");
+
+        // Selected section-ai find pannuvom
+        const targetSection = document.getElementById(targetId);
+
+        if (!targetSection) {
+            console.error("Section not found:", targetId);
+            return;
+        }
+
+        // Selected section mattum display aagum
+        targetSection.classList.add("active");
+
+        // Section-ku thevaiyana data load pannuvom
+        if (targetId === "bookingsSection") {
+            if (typeof loadBookings === "function") {
+                loadBookings();
+            }
+        }
+
+        if (targetId === "membersSection") {
+            if (typeof loadMembers === "function") {
+                loadMembers();
+            }
+        }
+
+       
+if (targetId === "membershipsSection") {
+    if (typeof loadMemberships === "function") {
+        loadMemberships();
+    }
+
+    if (typeof loadAssignmentDropdowns === "function") {
+        loadAssignmentDropdowns();
+    }
+}
+
+
+        if (targetId === "trainersSection") {
+            if (typeof loadTrainers === "function") {
+                loadTrainers();
+            }
+        }
+
+        if (targetId === "plansSection") {
+            if (typeof loadPlans === "function") {
+                loadPlans();
+            }
+        }
+
+    });
+
+});
+
+
+    // ==========================================
+    // START
+    // ==========================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            loadBookings();
+
+        }
+    );
+    
+/* =========================================
+   PLAN MANAGEMENT
+========================================= */
+
+let allPlans = [];
+
+function notifyPlan(message, type = "success") {
+    if (typeof showToast === "function") {
+        showToast(message, type);
+    } else {
+        alert(message);
+    }
+}
+
+async function loadPlans() {
+    if (!checkAdmin()) return;
+
+    const table = document.getElementById("plansTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="7" class="message-row loading">
+                Loading plans...
+            </td>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/admin/plans`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to load plans");
+        }
+
+        allPlans = Array.isArray(data.plans) ? data.plans : [];
+
+        updatePlanStats();
+        filterPlans();
+
+    } catch (error) {
+        console.error("Load plans error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7" class="message-row">
+                    Failed to load plans. Please refresh.
+                </td>
+            </tr>
+        `;
+
+        notifyPlan(error.message, "error");
+    }
+}
+
+function updatePlanStats() {
+    document.getElementById("planTotal").textContent =
+        allPlans.length;
+
+    document.getElementById("planActive").textContent =
+        allPlans.filter(plan => plan.active === true).length;
+
+    document.getElementById("planInactive").textContent =
+        allPlans.filter(plan => plan.active === false).length;
+}
+
+function filterPlans() {
+    const search = (
+        document.getElementById("planSearch").value || ""
+    ).trim().toLowerCase();
+
+    const status =
+        document.getElementById("planStatusFilter").value;
+
+    const filteredPlans = allPlans.filter(plan => {
+        const matchesSearch =
+            String(plan.name || "").toLowerCase().includes(search);
+
+        const matchesStatus =
+            status === "all" ||
+            (status === "active" && plan.active === true) ||
+            (status === "inactive" && plan.active === false);
+
+        return matchesSearch && matchesStatus;
+    });
+
+    renderPlans(filteredPlans);
+}
+
+function renderPlans(plans) {
+    const table = document.getElementById("plansTable");
+
+    if (!plans.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="7" class="message-row">
+                    No matching plans found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    table.innerHTML = plans.map(plan => {
+        const features = Array.isArray(plan.features)
+            ? plan.features
+            : [];
+
+        const featureHTML = features.length
+            ? `<ul style="padding-left:18px; margin:0;">
+                ${features.map(feature =>
+                    `<li>${escapeHtml(String(feature))}</li>`
+                ).join("")}
+               </ul>`
+            : "-";
+
+        const status = plan.active === true
+            ? "Active"
+            : "Inactive";
+
+        const statusClass = plan.active === true
+            ? "confirmed"
+            : "cancelled";
+
+        const planId = escapeHtml(String(plan._id));
+
+        return `
+            <tr>
+                <td>${escapeHtml(String(plan.name || "-"))}</td>
+
+                <td>₹${Number(plan.price).toLocaleString("en-IN")}</td>
+
+                <td>${Number(plan.duration)} days</td>
+
+                <td>${featureHTML}</td>
+
+                <td>${escapeHtml(String(plan.description || "-"))}</td>
+
+                <td>
+                    <span class="status ${statusClass}">
+                        ${status}
+                    </span>
+                </td>
+
+                <td>
+                    <div style="display:flex; gap:8px;
+                                flex-wrap:wrap;">
+
+                        <button type="button"
+                                class="admin-nav-btn"
+                                data-plan-action="edit"
+                                data-plan-id="${planId}">
+                            Edit
+                        </button>
+
+                        <button type="button"
+                                class="admin-nav-btn"
+                                data-plan-action="toggle"
+                                data-plan-id="${planId}">
+                            ${plan.active ? "Deactivate" : "Activate"}
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+/* OPEN ADD PLAN FORM */
+
+function openAddPlanForm() {
+    document.getElementById("planForm").reset();
+    document.getElementById("planId").value = "";
+
+    document.getElementById("planFormTitle").textContent =
+        "Add New Plan";
+
+    document.getElementById("savePlanBtn").textContent =
+        "Create Plan";
+
+    document.getElementById("planFormContainer").style.display =
+        "block";
+
+    document.getElementById("planFormContainer").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+/* =========================================
+   PLAN TEMPLATE SUGGESTIONS
+========================================= */
+
+const planTemplates = {
+    basic: {
+        name: "Basic Plus",
+        price: 1099,
+        duration: 30,
+        description: "Basic gym membership",
+        features: [
+            "Gym Access",
+            "Locker Access",
+            "Basic Workout Guidance"
+        ]
+    },
+
+    premium: {
+        name: "Premium Plus",
+        price: 1499,
+        duration: 60,
+        description: "Premium gym membership",
+        features: [
+            "Gym Access",
+            "Locker Access",
+            "Personal Trainer Guidance",
+            "Diet Guidance"
+        ]
+    },
+
+    pro: {
+        name: "Pro Plus",
+        price: 1999,
+        duration: 90,
+        description: "Professional gym membership",
+        features: [
+            "Unlimited Gym Access",
+            "Locker Access",
+            "Personal Trainer",
+            "Diet Plan",
+            "Progress Tracking"
+        ]
+    }
+};
+
+document.getElementById("planTemplate").addEventListener("change", function () {
+
+    const selectedTemplate = this.value;
+
+    // Custom plan select pannina fields clear aagum
+    if (selectedTemplate === "custom") {
+        document.getElementById("planName").value = "";
+        document.getElementById("planPrice").value = "";
+        document.getElementById("planDuration").value = "";
+        document.getElementById("planDescription").value = "";
+        document.getElementById("planFeatures").value = "";
+        return;
+    }
+
+    if (!selectedTemplate) return;
+
+    const template = planTemplates[selectedTemplate];
+
+    if (!template) return;
+
+    document.getElementById("planName").value = template.name;
+    document.getElementById("planPrice").value = template.price;
+    document.getElementById("planDuration").value = template.duration;
+    document.getElementById("planDescription").value = template.description;
+    document.getElementById("planFeatures").value =
+        template.features.join("\n");
+
+});
+
+
+/* OPEN EDIT PLAN FORM */
+
+function openEditPlanForm(planId) {
+    const plan = allPlans.find(
+        item => String(item._id) === String(planId)
+    );
+
+    if (!plan) {
+        notifyPlan("Plan not found. Refresh and try again.", "error");
+        return;
+    }
+
+    document.getElementById("planId").value = plan._id;
+    document.getElementById("planName").value = plan.name || "";
+    document.getElementById("planPrice").value = plan.price;
+    document.getElementById("planDuration").value = plan.duration;
+    document.getElementById("planDescription").value =
+        plan.description || "";
+
+    document.getElementById("planFeatures").value =
+        Array.isArray(plan.features)
+            ? plan.features.join("\n")
+            : "";
+
+    document.getElementById("planFormTitle").textContent =
+        "Edit Membership Plan";
+
+    document.getElementById("savePlanBtn").textContent =
+        "Update Plan";
+
+    document.getElementById("planFormContainer").style.display =
+        "block";
+
+    document.getElementById("planFormContainer").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+/* SAVE / UPDATE PLAN */
+
+async function savePlan(event) {
+    event.preventDefault();
+
+    if (!checkAdmin()) return;
+
+    const planId = document.getElementById("planId").value.trim();
+
+    const name = document.getElementById("planName").value.trim();
+    const price = document.getElementById("planPrice").value;
+    const duration = document.getElementById("planDuration").value;
+
+    const description =
+        document.getElementById("planDescription").value.trim();
+
+    const featuresText =
+        document.getElementById("planFeatures").value;
+
+    const features = featuresText
+        .split(/\r?\n/)
+        .map(feature => feature.trim())
+        .filter(Boolean);
+
+    if (!name || price === "" || duration === "") {
+        notifyPlan("Please fill in all required fields.", "error");
+        return;
+    }
+
+    if (!Number.isFinite(Number(price)) || Number(price) < 0) {
+        notifyPlan("Enter a valid price.", "error");
+        return;
+    }
+
+    if (!Number.isInteger(Number(duration)) || Number(duration) <= 0) {
+        notifyPlan("Duration must be a positive whole number of days.", "error");
+        return;
+    }
+
+    const payload = {
+        name,
+        price: Number(price),
+        duration: Number(duration),
+        description,
+        features
+    };
+
+    const saveButton = document.getElementById("savePlanBtn");
+    const originalText = saveButton.textContent;
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    try {
+        const url = planId
+            ? `${API_BASE_URL}/plans/${encodeURIComponent(planId)}`
+            : `${API_BASE_URL}/plans`;
+
+        const response = await fetch(url, {
+            method: planId ? "PUT" : "POST",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not save plan");
+        }
+
+        document.getElementById("planForm").reset();
+        document.getElementById("planId").value = "";
+
+        document.getElementById("planFormContainer").style.display =
+            "none";
+
+        notifyPlan(
+            planId
+                ? "Plan updated successfully!"
+                : "Plan created successfully!"
+        );
+
+        await loadPlans();
+
+    } catch (error) {
+        console.error("Save plan error:", error);
+        notifyPlan(error.message, "error");
+
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = originalText;
+    }
+}
+
+/* ACTIVATE / DEACTIVATE PLAN */
+
+async function togglePlanStatus(planId) {
+    if (!checkAdmin()) return;
+
+    const plan = allPlans.find(
+        item => String(item._id) === String(planId)
+    );
+
+    if (!plan) {
+        notifyPlan("Plan not found.", "error");
+        return;
+    }
+
+    const action = plan.active ? "deactivate" : "activate";
+
+    const confirmed = window.confirm(
+        `Are you sure you want to ${action} "${plan.name}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/plans/${encodeURIComponent(planId)}/${action}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || `Could not ${action} plan`
+            );
+        }
+
+        notifyPlan(
+            data.message ||
+            `Plan ${action}d successfully!`
+        );
+
+        await loadPlans();
+
+    } catch (error) {
+        console.error("Toggle plan error:", error);
+        notifyPlan(error.message, "error");
+    }
+}
+
+/* EVENT LISTENERS */
+
+document.getElementById("addPlanBtn").addEventListener(
+    "click",
+    openAddPlanForm
+);
+
+document.getElementById("refreshPlansBtn").addEventListener(
+    "click",
+    loadPlans
+);
+
+document.getElementById("cancelPlanBtn").addEventListener(
+    "click",
+    () => {
+        document.getElementById("planForm").reset();
+        document.getElementById("planId").value = "";
+
+        document.getElementById("planFormContainer").style.display =
+            "none";
+    }
+);
+
+document.getElementById("planForm").addEventListener(
+    "submit",
+    savePlan
+);
+
+document.getElementById("planSearch").addEventListener(
+    "input",
+    filterPlans
+);
+
+document.getElementById("planStatusFilter").addEventListener(
+    "change",
+    filterPlans
+);
+
+document.getElementById("plansTable").addEventListener(
+    "click",
+    event => {
+        const button = event.target.closest("[data-plan-action]");
+
+        if (!button) return;
+
+        const action = button.dataset.planAction;
+        const planId = button.dataset.planId;
+
+        if (action === "edit") {
+            openEditPlanForm(planId);
+        } else if (action === "toggle") {
+            togglePlanStatus(planId);
+        }
+    }
+);
+
+
+</script>
+
+</body>
+</html>
